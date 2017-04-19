@@ -1,5 +1,5 @@
 *.classpath
-*.class
+# *.class
 
 *.DS_Store
 
@@ -7,8 +7,8 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
-*.war
+# *.jar
+# *.war
 *.ear
 
 #JDBC Driver
