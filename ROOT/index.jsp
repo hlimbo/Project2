@@ -19,7 +19,7 @@ limitations under the License.
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Login</title>
+        <title>Login Hi there :D</title>
         <link href="/tomcat.css" rel="stylesheet" type="text/css" />
     </head>
 
