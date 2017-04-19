@@ -31,8 +31,8 @@ public class TomcatTest extends HttpServlet {
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
-        out.println("<HTML><HEAD><TITLE>MovieDB</TITLE></HEAD>");
-        out.println("<BODY><H1>MovieDB</H1>");
+        out.println("<HTML><HEAD><TITLE>GameDb</TITLE></HEAD>");
+        out.println("<BODY><H1>GameDB</H1>");
 
         try {
             //Class.forName("org.gjt.mm.mysql.Driver");
