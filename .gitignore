@@ -66,3 +66,6 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+
+docs/
+examples/
