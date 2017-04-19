@@ -22,9 +22,9 @@ public class TomcatTest extends HttpServlet {
     // Use http GET
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String loginUser = "mytestuser";
-        String loginPasswd = "mypassword";
-        String loginUrl = "jdbc:mysql://localhost:3306/moviedb";
+        String loginUser = "user";
+        String loginPasswd = "password";
+        String loginUrl = "jdbc:mysql://localhost:3306/gamedb";
 
         response.setContentType("text/html"); // Response mime type
 
@@ -42,7 +42,7 @@ public class TomcatTest extends HttpServlet {
             // Declare our statement
             Statement statement = dbcon.createStatement();
 
-            String query = "SELECT * from stars";
+            String query = "SELECT * from publishers";
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
@@ -52,10 +52,8 @@ public class TomcatTest extends HttpServlet {
             // Iterate through each row of rs
             while (rs.next()) {
                 String m_id = rs.getString("id");
-                String m_name = rs.getString("first_name") + " " + rs.getString("last_name");
-                String m_dob = rs.getString("dob");
-                out.println("<tr>" + "<td>" + m_id + "</td>" + "<td>" + m_name + "</td>" + "<td>" + m_dob + "</td>"
-                        + "</tr>");
+                String m_name = rs.getString("publisher");
+                out.println("<tr>" + "<td>" + m_id + "</td>" + "<td>" + m_name + "</td>"+ "</tr>");
             }
 
             out.println("</TABLE>");
@@ -71,7 +69,7 @@ public class TomcatTest extends HttpServlet {
         } // end catch SQLException
 
         catch (java.lang.Exception ex) {
-            out.println("<HTML>" + "<HEAD><TITLE>" + "MovieDB: Error" + "</TITLE></HEAD>\n<BODY>"
+            out.println("<HTML>" + "<HEAD><TITLE>" + "GameDB: Error" + "</TITLE></HEAD>\n<BODY>"
                     + "<P>SQL error in doGet: " + ex.getMessage() + "</P></BODY></HTML>");
             return;
         }
