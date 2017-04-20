@@ -31,14 +31,14 @@
 
 
   <servlet>
-    <servlet-name>TomcatFormServlet</servlet-name>
-    <servlet-class>TomcatForm</servlet-class>
+    <servlet-name>LoginFormServlet</servlet-name>
+    <servlet-class>LoginPage</servlet-class>
   </servlet>
 
 
   <servlet-mapping>
-    <servlet-name>TomcatFormServlet</servlet-name>
-    <url-pattern>/servlet/TomcatForm</url-pattern>
+    <servlet-name>LoginFormServlet</servlet-name>
+    <url-pattern>/servlet/login</url-pattern>
   </servlet-mapping>
 
 </web-app>

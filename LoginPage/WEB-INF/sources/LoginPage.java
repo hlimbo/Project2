@@ -9,7 +9,7 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class TomcatForm extends HttpServlet
+public class LoginPage extends HttpServlet
 {
     public String getServletInfo()
     {
@@ -59,7 +59,14 @@ public class TomcatForm extends HttpServlet
 			}
 			else
 			{
-				out.println("Login failure... Wrong password!");
+				try
+				{
+					response.sendRedirect("http://localhost:8080/LoginPage/");
+				}
+				catch (IOException e)
+				{
+				}
+				//out.println("Login failure... Wrong password!");
 			}
 			
 			 
@@ -114,9 +121,9 @@ public class TomcatForm extends HttpServlet
          out.close();
     }
     
-    /* public void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException
     {
-	doGet(request, response);
-	} */
+		doGet(request, response);
+	}
 }
