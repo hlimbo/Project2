@@ -45,8 +45,24 @@ public class TomcatForm extends HttpServlet
 
 			  String email = request.getParameter("email");
               String query = "SELECT * from customers where email = '" + email + "'";
-			 out.println(query);
-			  
+			 
+			out.println(query);
+			 
+			String password = request.getParameter("password");
+			String passwordQuery = "Select * from customers where password = '" + password + "'"; 
+			Statement statement2 = dbcon.createStatement();
+			
+			ResultSet ps = statement2.executeQuery(passwordQuery);
+			if(ps.next())
+			{
+				out.println("Login successful!");
+			}
+			else
+			{
+				out.println("Login failure... Wrong password!");
+			}
+			
+			 
               // Perform the query
               ResultSet rs = statement.executeQuery(query);
 			
