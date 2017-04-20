@@ -34,7 +34,11 @@ else
 	else
 		#cannot compile java files with jar dependencies (don't know why servlet-api.jar)
 		if [ -f "$master_path/$web_app_name/WEB-INF/sources/$source_name" ]; then
-			printf "all:\n\tjavac -d $master_path/$web_app_name/WEB-INF/classes -cp :.:$mysqlib:$servlet $master_path/$web_app_name/WEB-INF/sources/$source_name" > javaMakefile
+			printf "all:\n\tjavac -d $master_path/$web_app_name/WEB-INF/classes -cp :.:$mysqlib:$servlet" > javaMakefile 
+            for file in $(ls $master_path/$web_app_name/WEB-INF/lib/*.jar); do
+                printf ":$file" >> javaMakefile
+            done
+            printf " $master_path/$web_app_name/WEB-INF/sources/$source_name" >> javaMakefile
 			make -f javaMakefile
 			rm javaMakefile
 		else
