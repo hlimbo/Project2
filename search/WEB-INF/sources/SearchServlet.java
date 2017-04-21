@@ -89,20 +89,21 @@ public class SearchServlet extends HttpServlet
             // Declare our statement
             Statement statement = dbcon.createStatement();
 
-            //String query = "SELECT * FROM games WHERE name='"+(String)request.getParameter("name")+"'";
+            String table = (String) request.getParameter("table");
+            if (table==null) {
+                table="games";
+            }
+
             String masterTable = "((SELECT id AS game_ID FROM games) AS g_id NATURAL JOIN "
                 +"publishers_of_games NATURAL JOIN genres_of_games NATURAL JOIN (SELECT id AS publisher_id FROM publishers) AS p_id "
                 +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN platforms_of_games)";
             //duplicates due to games on multiple platforms, with multiple genres, or etc...
-            String query = "SELECT DISTINCT games.* FROM games, publishers, platforms, "+masterTable+" WHERE "
+            String query = "SELECT DISTINCT "+table+".* FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
                 +"games.id=game_id AND publishers.id=publisher_id AND platform_id=platform_id";
             query+=addSearchTerm(request,"name");
             query+=addSearchTerm(request,"publisher");
             query+=addSearchTerm(request,"genre");
             query+=addSearchTerm(request,"platform");
-            if (query==null) {
-                throw new Exception(query);
-            }
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
@@ -113,6 +114,9 @@ public class SearchServlet extends HttpServlet
             // Iterate through each row of rs
             Hashtable<String,Boolean> links = new Hashtable<String,Boolean>();
             links.put("name",true);
+            links.put("publisher",true);
+            links.put("genre",true);
+            links.put("platform",true);
             while (rs.next())
             {
                 results+=tableRow(rs,links);
