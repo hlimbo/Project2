@@ -16,6 +16,47 @@ public class SearchServlet extends HttpServlet
         return "Servlet connects to MySQL database and displays result of a SELECT";
     }
 
+    private String addSearchTerm (HttpServletRequest request, String term) {
+            String value = (String) request.getParameter(term);
+            String searchTerm = "";
+            if (value != null && value.trim() != "") {
+                searchTerm+=" AND ";
+                searchTerm+=term+"= '" + value + "' ";
+            }
+            return searchTerm;
+    }
+
+	private static String tableRow (ResultSet result) throws SQLException {
+		ResultSetMetaData meta = result.getMetaData();
+	    String resString = "";
+		resString+="<tr>";
+		for (int i=1;i<=meta.getColumnCount();++i) {
+			int type = meta.getColumnType(i);
+			String typeName = meta.getColumnTypeName(i);
+			resString+="<td>";
+            boolean handled = false;
+			switch(typeName.toUpperCase()) {
+			case "YEAR":
+				resString+=result.getString(i).substring(0,4);
+                handled=true;
+				break;
+			}
+			if (!handled) {
+				switch(type) {
+				case Types.INTEGER:
+					resString+=result.getInt(i);
+					break;
+				default:
+					resString+=result.getString(i);
+					break;
+				}
+			}
+			resString+="</td>";
+		}
+		resString+="</tr>";
+        return resString;
+	}
+
     // Use http GET
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,8 +77,20 @@ public class SearchServlet extends HttpServlet
             // Declare our statement
             Statement statement = dbcon.createStatement();
 
-            String name = request.getParameter("name");
-            String query = "SELECT * from games where name = '" + name + "'";
+            //String query = "SELECT * FROM games WHERE name='"+(String)request.getParameter("name")+"'";
+            String masterTable = "((SELECT id AS game_ID FROM games) AS g_id NATURAL JOIN "
+                +"publishers_of_games NATURAL JOIN genres_of_games NATURAL JOIN (SELECT id AS publisher_id FROM publishers) AS p_id "
+                +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN platforms_of_games)";
+            //duplicates due to games on multiple platforms, with multiple genres, or etc...
+            String query = "SELECT DISTINCT games.* FROM games, publishers, platforms, "+masterTable+" WHERE "
+                +"games.id=game_id AND publishers.id=publisher_id AND platform_id=platform_id";
+            query+=addSearchTerm(request,"name");
+            query+=addSearchTerm(request,"publisher");
+            query+=addSearchTerm(request,"genre");
+            query+=addSearchTerm(request,"platform");
+            if (query==null) {
+                throw new Exception(query);
+            }
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
@@ -46,21 +99,19 @@ public class SearchServlet extends HttpServlet
             results+="<TABLE border>";
 
             // Iterate through each row of rs
-            results+="<tr>" +
+            /*results+="<tr>" +
                 "<td>" + "ID" + "</td>" +
                 "<td>" + "Name " + "</td>" +
-                "</tr>";
+                "</tr>";*/
             while (rs.next())
             {
-                /*Hashtable<String,String> row = new Hashtable<String,String>();
-                row.put("id",rs.getString("id"));
-                row.put("name",rs.getString("name"));*/
-                String m_ID = rs.getString("id");
+                results+=tableRow(rs);
+                /*String m_ID = rs.getString("id");
                 String m_TI = rs.getString("name");
                 results+="<tr>" +
                     "<td>" + m_ID + "</td>" +
                     "<td>" + m_TI + "</td>" +
-                    "</tr>";
+                    "</tr>";*/
             }
             results+="</TABLE>";
 
@@ -76,10 +127,18 @@ public class SearchServlet extends HttpServlet
             dispatcher.forward(request,response);
         }
         catch (SQLException ex) {
+            PrintWriter out = response.getWriter();
+            out.println("<HTML>" +
+                    "<HEAD><TITLE>" +
+                    "gamedb: Error" +
+                    "</TITLE></HEAD>\n<BODY>" +
+                    "<P>Error in SQL: ");
             while (ex != null) {
-                System.out.println ("SQL Exception:  " + ex.getMessage ());
+                out.println ("SQL Exception:  " + ex.getMessage ());
                 ex = ex.getNextException ();
             }  // end while
+                    out.println("</P></BODY></HTML>");
+            out.close();
         }  // end catch SQLException
 
         catch(java.lang.Exception ex)
