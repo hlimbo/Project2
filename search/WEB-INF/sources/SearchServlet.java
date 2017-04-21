@@ -93,6 +93,14 @@ public class SearchServlet extends HttpServlet
             if (table==null) {
                 table="games";
             }
+            String limit = (String) request.getParameter("limit");
+            if (limit==null) {
+                limit="20";
+            }
+            String offset = (String) request.getParameter("offset");
+            if (offset==null) {
+                offset="0";
+            }
 
             String masterTable = "((SELECT id AS game_ID FROM games) AS g_id NATURAL JOIN "
                 +"publishers_of_games NATURAL JOIN genres_of_games NATURAL JOIN (SELECT id AS publisher_id FROM publishers) AS p_id "
@@ -104,6 +112,7 @@ public class SearchServlet extends HttpServlet
             query+=addSearchTerm(request,"publisher");
             query+=addSearchTerm(request,"genre");
             query+=addSearchTerm(request,"platform");
+            query+=" LIMIT "+limit+" OFFSET "+offset;
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
@@ -133,6 +142,7 @@ public class SearchServlet extends HttpServlet
             request.setAttribute("searchResults",results);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP); 
             dispatcher.forward(request,response);
+
         }
         catch (SQLException ex) {
             PrintWriter out = response.getWriter();
