@@ -26,14 +26,22 @@ public class SearchServlet extends HttpServlet
             return searchTerm;
     }
 
-	private static String tableRow (ResultSet result) throws SQLException {
+	private static String tableRow (ResultSet result,Hashtable<String,Boolean> link) throws SQLException {
 		ResultSetMetaData meta = result.getMetaData();
 	    String resString = "";
 		resString+="<tr>";
 		for (int i=1;i<=meta.getColumnCount();++i) {
 			int type = meta.getColumnType(i);
 			String typeName = meta.getColumnTypeName(i);
-			resString+="<td>";
+			String colName = meta.getColumnName(i);
+            boolean makeLink = false;
+            if  (link.containsKey(colName) && link.get(colName)) {
+                makeLink=true;
+                //TODO set links to display a single entity.
+			    resString+="<td><a href='display_"+colName+"'>";
+            } else {
+			    resString+="<td>";
+            }
             boolean handled = false;
 			switch(typeName.toUpperCase()) {
 			case "YEAR":
@@ -51,7 +59,11 @@ public class SearchServlet extends HttpServlet
 					break;
 				}
 			}
-			resString+="</td>";
+            if (makeLink) {
+                resString+="</a></td>";
+            } else {
+			    resString+="</td>";
+            }
 		}
 		resString+="</tr>";
         return resString;
@@ -99,19 +111,11 @@ public class SearchServlet extends HttpServlet
             results+="<TABLE border>";
 
             // Iterate through each row of rs
-            /*results+="<tr>" +
-                "<td>" + "ID" + "</td>" +
-                "<td>" + "Name " + "</td>" +
-                "</tr>";*/
+            Hashtable<String,Boolean> links = new Hashtable<String,Boolean>();
+            links.put("name",true);
             while (rs.next())
             {
-                results+=tableRow(rs);
-                /*String m_ID = rs.getString("id");
-                String m_TI = rs.getString("name");
-                results+="<tr>" +
-                    "<td>" + m_ID + "</td>" +
-                    "<td>" + m_TI + "</td>" +
-                    "</tr>";*/
+                results+=tableRow(rs,links);
             }
             results+="</TABLE>";
 
