@@ -1,6 +1,3 @@
-
-/* A servlet to display the contents of the MySQL movieDB database */
-
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -138,7 +135,10 @@ public class SearchServlet extends HttpServlet
             dbcon.close();
             String nextJSP = request.getParameter("nextPage");
             if (nextJSP == null) {
-                nextJSP = "/";
+                //nextJSP = "/search"; // /search/index.jsp";
+                nextJSP = "/search/index.jsp";
+            } else {
+                nextJSP="/"+nextJSP;
             }
             request.setAttribute("searchResults",results);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP); 

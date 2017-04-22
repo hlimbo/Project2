@@ -8,6 +8,7 @@
     genre: <input type="TEXT" name="genre" /> <BR />
     platform: <input type="TEXT" name="platform" /> <BR />
     publisher: <input type="TEXT" name="publisher" /> <BR />
+    <input type="HIDDEN" name="nextPage" <%= "value="+request.getRequestURI() %> />
     <center>
         <input type="SUBMIT" value="search" />
     </center>

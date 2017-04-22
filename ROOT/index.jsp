@@ -24,7 +24,9 @@ limitations under the License.
     </head>
 
     <body>
-        Index page accessed. TODO
+        Index page accessed. TODO. <br />
+        Example of including search component.
         <a href="server.jsp">server</a>
+        <jsp:include page="search/search.jsp" />
     </body>
 </html>

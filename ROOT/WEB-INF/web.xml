@@ -25,4 +25,15 @@
   <description>
       web application root
   </description>
+
+  <servlet>
+    <servlet-name>Search</servlet-name>
+    <servlet-class>SearchServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Search</servlet-name>
+    <url-pattern>/search/query</url-pattern>
+  </servlet-mapping>
+
 </web-app>
