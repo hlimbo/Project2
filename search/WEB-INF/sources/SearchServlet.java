@@ -104,10 +104,11 @@ public class SearchServlet extends HttpServlet
 
             String masterTable = "((SELECT id AS game_ID FROM games) AS g_id NATURAL JOIN "
                 +"publishers_of_games NATURAL JOIN genres_of_games NATURAL JOIN (SELECT id AS publisher_id FROM publishers) AS p_id "
-                +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN platforms_of_games)";
+                +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN (SELECT id AS platform_id FROM platforms) AS l_id"
+                +" NATURAL JOIN platforms_of_games)";
             //duplicates due to games on multiple platforms, with multiple genres, or etc...
             String query = "SELECT DISTINCT "+table+".* FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
-                +"games.id=game_id AND publishers.id=publisher_id AND platform_id=platform_id";
+                +"games.id=game_id AND publishers.id=publisher_id AND platforms.id=platform_id";
             query+=addSearchTerm(request,"name");
             query+=addSearchTerm(request,"publisher");
             query+=addSearchTerm(request,"genre");
