@@ -10,7 +10,7 @@
     publisher: <input type="TEXT" name="publisher" /> <BR />
     <input type="HIDDEN" name="nextPage" <%= "value="+request.getRequestURI() %> />
     <center>
-        <input type="SUBMIT" value="search" />
+        <input type="SUBMIT" value="Search" />
     </center>
 </form>
 <% } %>

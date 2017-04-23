@@ -23,43 +23,45 @@ public class SearchServlet extends HttpServlet
             return searchTerm;
     }
 
-	private static String tableRow (ResultSet result,Hashtable<String,Boolean> link) throws SQLException {
+	private static String tableRow (ResultSet result,Hashtable<String,Boolean> link,String table) throws SQLException {
 		ResultSetMetaData meta = result.getMetaData();
 	    String resString = "";
 		resString+="<tr>";
 		for (int i=1;i<=meta.getColumnCount();++i) {
 			int type = meta.getColumnType(i);
 			String typeName = meta.getColumnTypeName(i);
-			String colName = meta.getColumnName(i);
-            boolean makeLink = false;
-            if  (link.containsKey(colName) && link.get(colName)) {
-                makeLink=true;
-                //TODO set links to display a single entity.
-			    resString+="<td><a href='display_"+colName+"'>";
-            } else {
-			    resString+="<td>";
-            }
             boolean handled = false;
+            String value="";
 			switch(typeName.toUpperCase()) {
 			case "YEAR":
-				resString+=result.getString(i).substring(0,4);
+				value+=result.getString(i).substring(0,4);
                 handled=true;
 				break;
 			}
 			if (!handled) {
 				switch(type) {
 				case Types.INTEGER:
-					resString+=result.getInt(i);
+					value+=result.getInt(i);
 					break;
 				default:
-					resString+=result.getString(i);
+					value+=result.getString(i);
 					break;
 				}
 			}
-            if (makeLink) {
+			String colName = meta.getColumnName(i);
+            boolean makeLink = false;
+            if  (link.containsKey(colName) && link.get(colName)) {
+                makeLink=true;
+			    resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+"&"+colName+"="+value+"\">";
+                resString+=value;
                 resString+="</a></td>";
             } else {
+			    resString+="<td>";
+                resString+=value;
 			    resString+="</td>";
+            }
+            if (makeLink) {
+            } else {
             }
 		}
 		resString+="</tr>";
@@ -84,11 +86,14 @@ public class SearchServlet extends HttpServlet
 
             Connection dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
             // Declare our statement
-            Statement statement = dbcon.createStatement();
+            //Statement statement = dbcon.createStatement();
+            PreparedStatement statement; 
 
             String table = (String) request.getParameter("table");
             if (table==null) {
                 table="games";
+            } else {
+                table = table.replaceALL("[^\\w]","_");
             }
             String limit = (String) request.getParameter("limit");
             if (limit==null) {
@@ -110,10 +115,14 @@ public class SearchServlet extends HttpServlet
             query+=addSearchTerm(request,"publisher");
             query+=addSearchTerm(request,"genre");
             query+=addSearchTerm(request,"platform");
-            query+=" LIMIT "+limit+" OFFSET "+offset;
+            query+=" LIMIT ? OFFSET ?";
 
             // Perform the query
-            ResultSet rs = statement.executeQuery(query);
+            statement = dbcon.prepareStatement(query);
+            statement.setString(1,limit);
+            statement.setString(2,offset);
+            ResultSet rs = statement.executeQuery();
+            statement.close();
 
             String results = "";
             results+="<TABLE border>";
@@ -126,12 +135,11 @@ public class SearchServlet extends HttpServlet
             links.put("platform",true);
             while (rs.next())
             {
-                results+=tableRow(rs,links);
+                results+=tableRow(rs,links,table);
             }
             results+="</TABLE>";
 
             rs.close();
-            statement.close();
             dbcon.close();
             String nextJSP = request.getParameter("nextPage");
             if (nextJSP == null) {

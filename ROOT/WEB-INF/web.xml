@@ -36,4 +36,14 @@
     <url-pattern>/search/query</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>Display</servlet-name>
+    <servlet-class>DisplayServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Display</servlet-name>
+    <url-pattern>/display/query</url-pattern>
+  </servlet-mapping>
+
 </web-app>
