@@ -52,7 +52,8 @@ public class SearchServlet extends HttpServlet
             boolean makeLink = false;
             if  (link.containsKey(colName) && link.get(colName)) {
                 makeLink=true;
-			    resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+"&"+colName+"="+value+"\">";
+			    resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+
+                    "&"+colName+"="+URLEncoder.encode(value,"UTF-8")+"\">";
                 resString+=value;
                 resString+="</a></td>";
             } else {

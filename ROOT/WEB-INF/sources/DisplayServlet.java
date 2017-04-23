@@ -125,8 +125,10 @@ public class DisplayServlet extends HttpServlet
                                         if (fieldIgnores.containsKey(parentColumn) && fieldIgnores.get(parentColumn)) {
                                             continue;
                                         } else if (links.containsKey(parentColumn) && links.get(parentColumn)) {
-                                            fieldValue="<a href=\"/display/query?table="+parentTable+
-                                                "&columnName="+parentColumn+"&"+parentColumn+"="+fieldValue+"\">"+fieldValue+"</a>";
+                                            String fieldUrl = "/display/query?table="+parentTable+
+                                                "&columnName="+parentColumn+"&"+parentColumn+"="+
+                                                URLEncoder.encode(fieldValue,"UTF-8");
+                                            fieldValue="<a href=\""+fieldUrl+"\">"+fieldValue+"</a>";
                                         }
                                         if (!fields.containsKey(parentColumn)) {
                                             fields.put(parentColumn,fieldValue);
