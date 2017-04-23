@@ -85,8 +85,14 @@ public class DisplayServlet extends HttpServlet
             fieldIgnores.put("game_id",true);
             fieldIgnores.put("genre_id",true);
             fieldIgnores.put("publisher_id",true);
-            fieldIgnores.put("global_sales",true);
+            fieldIgnores.put("globalsales",true);
             fieldIgnores.put("rank",true);
+            //Sets which fields to hyperlink. Configuration option
+            Hashtable<String,Boolean> links = new Hashtable<String,Boolean>();
+            links.put("name",true);
+            links.put("publisher",true);
+            links.put("genre",true);
+            links.put("platform",true);
 
             results+="<tr><td>"+columnValue+"</td</tr>";
             for (String tbl : tables) {
@@ -115,13 +121,17 @@ public class DisplayServlet extends HttpServlet
                                     ResultSetMetaData parentMeta = parentResult.getMetaData();
                                     for (int j=1;j<=parentMeta.getColumnCount();++j) {
                                         String parentColumn = parentMeta.getColumnName(j);
+                                        String fieldValue = parentResult.getString(j);
                                         if (fieldIgnores.containsKey(parentColumn) && fieldIgnores.get(parentColumn)) {
                                             continue;
+                                        } else if (links.containsKey(parentColumn) && links.get(parentColumn)) {
+                                            fieldValue="<a href=\"/display/query?table="+parentTable+
+                                                "&columnName="+parentColumn+"&"+parentColumn+"="+fieldValue+"\">"+fieldValue+"</a>";
                                         }
                                         if (!fields.containsKey(parentColumn)) {
-                                            fields.put(parentColumn,parentResult.getString(j));
+                                            fields.put(parentColumn,fieldValue);
                                         } else {
-                                            fields.put(parentColumn,fields.get(parentColumn)+"<br />"+parentResult.getString(j));
+                                            fields.put(parentColumn,fields.get(parentColumn)+"<br />"+fieldValue);
                                         }
                                     }
                                 }
