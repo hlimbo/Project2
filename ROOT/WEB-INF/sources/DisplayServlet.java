@@ -85,6 +85,7 @@ public class DisplayServlet extends HttpServlet
             fieldIgnores.put("game_id",true);
             fieldIgnores.put("genre_id",true);
             fieldIgnores.put("publisher_id",true);
+            fieldIgnores.put("global_sales",true);
             fieldIgnores.put("rank",true);
 
             results+="<tr><td>"+columnValue+"</td</tr>";
@@ -120,7 +121,7 @@ public class DisplayServlet extends HttpServlet
                                         if (!fields.containsKey(parentColumn)) {
                                             fields.put(parentColumn,parentResult.getString(j));
                                         } else {
-                                            fields.put(parentColumn,fields.get(parentColumn)+", "+parentResult.getString(j));
+                                            fields.put(parentColumn,fields.get(parentColumn)+"<br />"+parentResult.getString(j));
                                         }
                                     }
                                 }
