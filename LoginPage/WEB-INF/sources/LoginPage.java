@@ -45,15 +45,20 @@ public class LoginPage extends HttpServlet
 
 			  String email = request.getParameter("email");
               String query = "SELECT * from customers where email = '" + email + "'";
-			 
-			out.println(query);
+			  Statement emailStatement = dbcon.createStatement();
+			  
 			 
 			String password = request.getParameter("password");
 			String passwordQuery = "Select * from customers where password = '" + password + "'"; 
 			Statement statement2 = dbcon.createStatement();
 			
+			ResultSet es = emailStatement.executeQuery(query);
 			ResultSet ps = statement2.executeQuery(passwordQuery);
-			if(ps.next())
+			
+			//use a session key for the client.
+			
+			
+			if(es.next() && ps.next())
 			{
 				out.println("Login successful!");
 			}
@@ -61,7 +66,10 @@ public class LoginPage extends HttpServlet
 			{
 				try
 				{
+					//client side
 					response.sendRedirect("http://localhost:8080/LoginPage/");
+					HttpSession session = request.getSession();
+					session.setAttribute("sessionKey", 0);
 				}
 				catch (IOException e)
 				{

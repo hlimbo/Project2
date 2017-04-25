@@ -5,9 +5,23 @@
 </HEAD>
 
 <BODY BGCOLOR="#FDF5E6">
+
+
+<% if ( session.getAttribute("sessionKey") != null ){
+		
+
+	if ( (int)session.getAttribute("sessionKey") == 0 ) {
+
+%>
+
+
 <H1 ALIGN="CENTER">GameDB Login Page</H1>
 
 <p id="invalid_flag"></p>
+
+email or password is invalid
+
+<% }} %>
 
 <FORM ACTION="/LoginPage/servlet/login"
       METHOD="POST">
