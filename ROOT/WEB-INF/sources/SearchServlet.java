@@ -1,6 +1,3 @@
-
-/* A servlet to display the contents of the MySQL movieDB database */
-
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -26,43 +23,46 @@ public class SearchServlet extends HttpServlet
             return searchTerm;
     }
 
-	private static String tableRow (ResultSet result,Hashtable<String,Boolean> link) throws SQLException {
+	private static String tableRow (ResultSet result,Hashtable<String,Boolean> link,String table) throws SQLException {
 		ResultSetMetaData meta = result.getMetaData();
 	    String resString = "";
 		resString+="<tr>";
 		for (int i=1;i<=meta.getColumnCount();++i) {
 			int type = meta.getColumnType(i);
 			String typeName = meta.getColumnTypeName(i);
-			String colName = meta.getColumnName(i);
-            boolean makeLink = false;
-            if  (link.containsKey(colName) && link.get(colName)) {
-                makeLink=true;
-                //TODO set links to display a single entity.
-			    resString+="<td><a href='display_"+colName+"'>";
-            } else {
-			    resString+="<td>";
-            }
             boolean handled = false;
+            String value="";
 			switch(typeName.toUpperCase()) {
 			case "YEAR":
-				resString+=result.getString(i).substring(0,4);
+				value+=result.getString(i).substring(0,4);
                 handled=true;
 				break;
 			}
 			if (!handled) {
 				switch(type) {
 				case Types.INTEGER:
-					resString+=result.getInt(i);
+					value+=result.getInt(i);
 					break;
 				default:
-					resString+=result.getString(i);
+					value+=result.getString(i);
 					break;
 				}
 			}
-            if (makeLink) {
+			String colName = meta.getColumnName(i);
+            boolean makeLink = false;
+            if  (link.containsKey(colName) && link.get(colName)) {
+                makeLink=true;
+			    resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+
+                    "&"+colName+"="+URLEncoder.encode(value,"UTF-8")+"\">";
+                resString+=value;
                 resString+="</a></td>";
             } else {
+			    resString+="<td>";
+                resString+=value;
 			    resString+="</td>";
+            }
+            if (makeLink) {
+            } else {
             }
 		}
 		resString+="</tr>";
@@ -87,11 +87,14 @@ public class SearchServlet extends HttpServlet
 
             Connection dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
             // Declare our statement
-            Statement statement = dbcon.createStatement();
+            //Statement statement = dbcon.createStatement();
+            PreparedStatement statement; 
 
             String table = (String) request.getParameter("table");
             if (table==null) {
                 table="games";
+            } else {
+                table = table.replaceALL("[^\\w]","_");
             }
             String limit = (String) request.getParameter("limit");
             if (limit==null) {
@@ -104,18 +107,23 @@ public class SearchServlet extends HttpServlet
 
             String masterTable = "((SELECT id AS game_ID FROM games) AS g_id NATURAL JOIN "
                 +"publishers_of_games NATURAL JOIN genres_of_games NATURAL JOIN (SELECT id AS publisher_id FROM publishers) AS p_id "
-                +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN platforms_of_games)";
+                +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN (SELECT id AS platform_id FROM platforms) AS l_id"
+                +" NATURAL JOIN platforms_of_games)";
             //duplicates due to games on multiple platforms, with multiple genres, or etc...
             String query = "SELECT DISTINCT "+table+".* FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
-                +"games.id=game_id AND publishers.id=publisher_id AND platform_id=platform_id";
+                +"games.id=game_id AND publishers.id=publisher_id AND platforms.id=platform_id";
             query+=addSearchTerm(request,"name");
             query+=addSearchTerm(request,"publisher");
             query+=addSearchTerm(request,"genre");
             query+=addSearchTerm(request,"platform");
-            query+=" LIMIT "+limit+" OFFSET "+offset;
+            query+=" LIMIT ? OFFSET ?";
 
             // Perform the query
-            ResultSet rs = statement.executeQuery(query);
+            statement = dbcon.prepareStatement(query);
+            statement.setString(1,limit);
+            statement.setString(2,offset);
+            ResultSet rs = statement.executeQuery();
+            statement.close();
 
             String results = "";
             results+="<TABLE border>";
@@ -128,16 +136,18 @@ public class SearchServlet extends HttpServlet
             links.put("platform",true);
             while (rs.next())
             {
-                results+=tableRow(rs,links);
+                results+=tableRow(rs,links,table);
             }
             results+="</TABLE>";
 
             rs.close();
-            statement.close();
             dbcon.close();
             String nextJSP = request.getParameter("nextPage");
             if (nextJSP == null) {
-                nextJSP = "/";
+                //nextJSP = "/search"; // /search/index.jsp";
+                nextJSP = "/search/index.jsp";
+            } else {
+                nextJSP="/"+nextJSP;
             }
             request.setAttribute("searchResults",results);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP); 
