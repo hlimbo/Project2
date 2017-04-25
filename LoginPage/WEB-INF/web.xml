@@ -38,7 +38,7 @@
 
   <servlet-mapping>
     <servlet-name>LoginFormServlet</servlet-name>
-    <url-pattern>/servlet/login</url-pattern>
+    <url-pattern>/servlet/loginSuccess</url-pattern>
   </servlet-mapping>
 
 </web-app>

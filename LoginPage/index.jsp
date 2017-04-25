@@ -23,7 +23,7 @@ email or password is invalid
 
 <% }} %>
 
-<FORM ACTION="/LoginPage/servlet/login"
+<FORM ACTION="/LoginPage/servlet/loginSuccess"
       METHOD="POST">
   Email: <INPUT type="email" name="email" required><BR>
 
