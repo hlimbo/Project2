@@ -17,10 +17,25 @@ public class SearchServlet extends HttpServlet
             String value = (String) request.getParameter(term);
             String searchTerm = "";
             if (value != null && value.trim() != "") {
-                searchTerm+=" AND ";
-                searchTerm+=term+"= '" + value + "' ";
+                for (String subvalue : value.split(" ")) {
+                    searchTerm+=" AND ";
+                    searchTerm+=term+" LIKE ?";
+                }
             }
             return searchTerm;
+    }
+
+    private int setSearchTerm (HttpServletRequest request, String term, PreparedStatement statement, int offset) throws SQLException {
+            String value = (String) request.getParameter(term);
+            String searchTerm = "";
+            if (value != null && value.trim() != "") {
+                for (String subvalue : value.split(" ")) {
+                    statement.setString(offset,"%"+subvalue+"%");
+                    offset+=1;
+                }
+                //statement.setString(offset,"%"+value+"%");
+            }
+            return offset;
     }
 
 	private static String tableRow (ResultSet result,Hashtable<String,Boolean> link,String table) throws SQLException {
@@ -52,8 +67,13 @@ public class SearchServlet extends HttpServlet
             boolean makeLink = false;
             if  (link.containsKey(colName) && link.get(colName)) {
                 makeLink=true;
-			    resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+
-                    "&"+colName+"="+URLEncoder.encode(value,"UTF-8")+"\">";
+                try {
+			        resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+
+                        "&"+colName+"="+URLEncoder.encode(value,"UTF-8")+"\">";
+                } catch (UnsupportedEncodingException error) {
+			        resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+
+                        "&"+colName+"="+value.replaceAll("[^\\w]","_")+"\">";
+                }
                 resString+=value;
                 resString+="</a></td>";
             } else {
@@ -80,6 +100,7 @@ public class SearchServlet extends HttpServlet
 
         response.setContentType("text/html");    // Response mime type
 
+        String query = "";
         try
         {
             //Class.forName("org.gjt.mm.mysql.Driver");
@@ -94,36 +115,45 @@ public class SearchServlet extends HttpServlet
             if (table==null) {
                 table="games";
             } else {
-                table = table.replaceALL("[^\\w]","_");
+                table = table.replaceAll("[^\\w]","_");
             }
             String limit = (String) request.getParameter("limit");
             if (limit==null) {
                 limit="20";
+            } else {
+                limit = limit.replaceAll("[\\D]","");
             }
+
             String offset = (String) request.getParameter("offset");
             if (offset==null) {
                 offset="0";
+            } else {
+                offset = offset.replaceAll("[\\D]","");
             }
 
-            String masterTable = "((SELECT id AS game_ID FROM games) AS g_id NATURAL JOIN "
+            String masterTable = "((SELECT id AS game_id FROM games) AS g_id NATURAL JOIN "
                 +"publishers_of_games NATURAL JOIN genres_of_games NATURAL JOIN (SELECT id AS publisher_id FROM publishers) AS p_id "
                 +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN (SELECT id AS platform_id FROM platforms) AS l_id"
                 +" NATURAL JOIN platforms_of_games)";
             //duplicates due to games on multiple platforms, with multiple genres, or etc...
-            String query = "SELECT DISTINCT "+table+".* FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
+            query = "SELECT DISTINCT "+table+".* FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
                 +"games.id=game_id AND publishers.id=publisher_id AND platforms.id=platform_id";
             query+=addSearchTerm(request,"name");
             query+=addSearchTerm(request,"publisher");
             query+=addSearchTerm(request,"genre");
             query+=addSearchTerm(request,"platform");
-            query+=" LIMIT ? OFFSET ?";
+            query+=" LIMIT "+limit+" OFFSET "+offset;
 
             // Perform the query
             statement = dbcon.prepareStatement(query);
-            statement.setString(1,limit);
-            statement.setString(2,offset);
+            int statementOffset = 1;
+            statementOffset = setSearchTerm(request,"name",statement,statementOffset);
+            statementOffset = setSearchTerm(request,"publisher",statement,statementOffset);
+            statementOffset = setSearchTerm(request,"genre",statement,statementOffset);
+            statementOffset = setSearchTerm(request,"platform",statement,statementOffset);
+            /*statement.setString(1,limit);
+            statement.setString(2,offset);*/
             ResultSet rs = statement.executeQuery();
-            statement.close();
 
             String results = "";
             results+="<TABLE border>";
@@ -141,10 +171,10 @@ public class SearchServlet extends HttpServlet
             results+="</TABLE>";
 
             rs.close();
+            statement.close();
             dbcon.close();
             String nextJSP = request.getParameter("nextPage");
             if (nextJSP == null) {
-                //nextJSP = "/search"; // /search/index.jsp";
                 nextJSP = "/search/index.jsp";
             } else {
                 nextJSP="/"+nextJSP;
@@ -165,7 +195,8 @@ public class SearchServlet extends HttpServlet
                 out.println ("SQL Exception:  " + ex.getMessage ());
                 ex = ex.getNextException ();
             }  // end while
-                    out.println("</P></BODY></HTML>");
+            out.println(" in sql expression "+query);
+            out.println("</P></BODY></HTML>");
             out.close();
         }  // end catch SQLException
 
