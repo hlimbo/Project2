@@ -18,6 +18,10 @@
 			</tr>
 		</thead>
 		
+		<!-- keep track of shopping cart contents cached with using session key  -->
+		<!--- session key holds values to shopping cart and login info -->
+		<!-- TODO: Integrate with JSP -->
+		<!-- todo: find a way to autogenerate session keys via java code -->
 		<tbody>
 			<tr>
 				<td>50</td>
@@ -28,7 +32,11 @@
 	</table>
 	
 	<br><br>
+	
+	<!-- todo: make xml page for this transition -->
+	<form action="/servlet/customer-info" METHOD="GET">
 	<button name="submit">Go to Checkout</button>
+	</form>
 	
 	
 </body>

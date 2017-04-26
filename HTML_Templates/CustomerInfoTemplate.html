@@ -8,22 +8,35 @@
 </head>
 <body>
 	<h1>Customer Info</h1>
-	<form>
-		<label>First Name:</label>
-		<input name="first_name" type="text" required>
-		<label>Last Name:</label>
-		<input name="last_name" type="text" required>
-		<label>Address:</label>
-		<input name="address" type="text" required>
-		<label>City:</label>
-		<input name="city" type="text" required>
-		<label>Zip Code:</label>
-		<input name="zip" type="text" required>
-		<label>Credit Card Number:</label>
-		<input name="cc_id" type="text" required>	
+	<!-- url pattern todo here! -->
+	<form action="/servlet/confirmation-page" METHOD="POST">
+		<div>
+			<label>First Name:</label>
+			<input name="first_name" type="text" required>
+		</div>
+		<div>
+			<label>Last Name:</label>
+			<input name="last_name" type="text" required>
+		</div>
+		<div>
+			<label>Address:</label>
+			<input name="address" type="text" required>
+		</div>
+		<div>
+			<label>City:</label>
+			<input name="city" type="text" required>
+		</div>
+		<div>
+			<label>Zip Code:</label>
+			<input name="zip" type="text" required>
+		</div>
+		<div>
+			<label>Credit Card Number:</label>
+			<input name="cc_id" type="text" required>	
+		</div>
+		<br>
 		<button name="submit">Confirm Purchase</button>
 	</form>
-	
 	
 </body>
 </html>

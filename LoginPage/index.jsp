@@ -6,22 +6,12 @@
 
 <BODY BGCOLOR="#FDF5E6">
 
-
-<% if ( session.getAttribute("sessionKey") != null ){
-		
-
-	if ( (int)session.getAttribute("sessionKey") == 0 ) {
-
-%>
-
-
 <H1 ALIGN="CENTER">GameDB Login Page</H1>
 
-<p id="invalid_flag"></p>
-
-email or password is invalid
-
-<% }} %>
+<% if ( session.getAttribute("sessionKey") != null ){ %>
+	<p id="invalid_flag">email or password is invalid</p>
+	<p> Session Key <%= session.getAttribute("sessionKey") %> </p>
+<% } %>
 
 <FORM ACTION="/LoginPage/servlet/loginSuccess"
       METHOD="POST">

@@ -69,7 +69,7 @@ public class LoginPage extends HttpServlet
 					//client side
 					response.sendRedirect("http://localhost:8080/LoginPage/");
 					HttpSession session = request.getSession();
-					session.setAttribute("sessionKey", 0);
+					session.setAttribute("sessionKey", session.getId());
 				}
 				catch (IOException e)
 				{
