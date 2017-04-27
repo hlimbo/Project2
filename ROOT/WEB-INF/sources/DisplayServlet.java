@@ -13,6 +13,14 @@ public class DisplayServlet extends HttpServlet
         return "Servlet connects to MySQL database and displays a single record within the database";
     }
 
+    private String cartButton (String value) {
+        String button = "<tr><td><form action=\"TODO\" method=\"GET\">";
+        button+="<input type=\"HIDDEN\" id=\""+value+"\" \\>";
+        button+="<input type=\"SUBMIT\" value=\"Checkout\" \\>";
+        button+="</form></td></tr>";
+        return button;
+    }
+
     // Use http GET
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -74,6 +82,10 @@ public class DisplayServlet extends HttpServlet
             //For example, publishers.id -> publisher_id
             String tableIDField = table.substring(0,table.length()-1)+"_id";
             String tableIDCond = tableIDField+"="+id;
+            String gameID = "";
+            if (table.trim().compareToIgnoreCase("games") == 0) {
+                gameID=id;
+            }
 
             statement.close();
             rs.close();
@@ -105,7 +117,7 @@ public class DisplayServlet extends HttpServlet
                     query="SELECT DISTINCT * FROM "+tbl+" WHERE "+tableIDCond;
                     statement=dbcon.prepareStatement(query);
                     rs = statement.executeQuery();
-                    Hashtable<String,String> fields = new Hashtable<String,String>();
+                    results += "<td><TABLE border>";
                     while (rs.next()) {
                         ResultSetMetaData meta = rs.getMetaData();
                         for (int i=1;i<=meta.getColumnCount();++i) {
@@ -118,9 +130,13 @@ public class DisplayServlet extends HttpServlet
                                 parentStatement.setString(1,rs.getString(i));
                                 ResultSet parentResult = parentStatement.executeQuery();
                                 while (parentResult.next()) {
+                                    results+="<tr>";
                                     ResultSetMetaData parentMeta = parentResult.getMetaData();
                                     for (int j=1;j<=parentMeta.getColumnCount();++j) {
                                         String parentColumn = parentMeta.getColumnName(j);
+                                        if (parentColumn.compareToIgnoreCase("id")==0 && parentTable.compareToIgnoreCase("games")==0) {
+                                            gameID=Integer.toString(parentResult.getInt(1));
+                                        }
                                         String fieldValue = parentResult.getString(j);
                                         if (fieldIgnores.containsKey(parentColumn) && fieldIgnores.get(parentColumn)) {
                                             continue;
@@ -128,13 +144,15 @@ public class DisplayServlet extends HttpServlet
                                             String fieldUrl = "/display/query?table="+parentTable+
                                                 "&columnName="+parentColumn+"&"+parentColumn+"="+
                                                 URLEncoder.encode(fieldValue,"UTF-8");
-                                            fieldValue="<a href=\""+fieldUrl+"\">"+fieldValue+"</a>";
-                                        }
-                                        if (!fields.containsKey(parentColumn)) {
-                                            fields.put(parentColumn,fieldValue);
+                                            fieldValue="<td><a href=\""+fieldUrl+"\">"+fieldValue+"</a></td>";
                                         } else {
-                                            fields.put(parentColumn,fields.get(parentColumn)+"<br />"+fieldValue);
+                                            fieldValue="<td>"+fieldValue+"</td>";
                                         }
+                                        results+=fieldValue;
+                                    }
+                                    results+="</tr>";
+                                    if (parentTable.trim().compareToIgnoreCase("games")==0) {
+                                        results+=cartButton(gameID);
                                     }
                                 }
                                 parentResult.close();
@@ -142,12 +160,12 @@ public class DisplayServlet extends HttpServlet
                             }
                         }
                     }
-                    for (Enumeration<String> field = fields.keys();field.hasMoreElements();) {
-                        String fld = field.nextElement();
-                        results+="<td>"+fields.get(fld)+"</td>";
-                    }
+                    results += "</td></TABLE>";
                     results+="</tr>\n";
                 }
+            }
+            if (table.compareToIgnoreCase("games") == 0) {
+                results+=cartButton(gameID);
             }
             results+="</TABLE>";
 
