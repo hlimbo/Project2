@@ -35,6 +35,7 @@ public class ShoppingCart extends HttpServlet
 			//critical section ~ find pre-existing shopping cart if within same session.
 			synchronized(session)
 			{
+				//if(session.getAttribute("loginKey") != null)
 				ArrayList previousItems = (ArrayList)session.getAttribute("ShoppingCartItems");
 				if(previousItems == null)
 				{
@@ -43,19 +44,21 @@ public class ShoppingCart extends HttpServlet
 				}
 			}
 			
+			String newItem = request.getParameter("newItem");
 			
-			if(session.getAttribute("loginKey") != null)
+			response.setContentType("text/html");
+			PrintWrite out = response.getWriter();
+			
+			//add item to cart
+			synchronized(previousItems)
 			{
-				//if shopping cart does not exist, create one for the session.
-				if(session.getAttribute("ShoppingCartItems") == null)
+				if(newItem != null)
 				{
-					session.setAttribute("ShoppingCartItems") = new ArrayList<ShoppingCartItem>();			
+					ShoppingCartItem cartItem = new ShoppingCartItem(itenName, 13.77);
+					previousItems.add(cartItem);
 				}
-				
-				//add item to shopping cart.
-				
-				
 			}
+			
 		}
 		catch (IOException e)
 		{
