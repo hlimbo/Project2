@@ -171,18 +171,16 @@ public class DisplayServlet extends HttpServlet
                                         } else {
                                             fields.add(k,fieldValue);
                                         }
-                                        //results+=fieldValue;
                                     }
                                     if (parentTable.trim().compareToIgnoreCase("games")==0) {
-                                        //results+=cartButton(gameID);
                                         fields.set(k,fields.get(k)+cartButton(gameID));
                                     }
                                 }
-                                //results+="</tr>";
                                 parentResult.close();
                                 parentStatement.close();
                             }
                         }
+                        ++k;
                     }
                     for (String fld : fields) {
                         results+="<tr>"+fld+"</tr>";
