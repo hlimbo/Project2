@@ -27,11 +27,40 @@ public class ShoppingCart extends HttpServlet
 		
 		response.setContentType("text/html"); // Response mime type
 		
-		//Java writes html code
-		PrintWriter out = response.getWriter();
-		
-		out.println()
-		
+		//obtain session key
+		try
+		{
+			HttpSession session = request.getSession();
+			
+			//critical section ~ find pre-existing shopping cart if within same session.
+			synchronized(session)
+			{
+				ArrayList previousItems = (ArrayList)session.getAttribute("ShoppingCartItems");
+				if(previousItems == null)
+				{
+					previousItems = new ArrayList();
+					session.setAttribute("ShoppingCartItems", previousItems);
+				}
+			}
+			
+			
+			if(session.getAttribute("loginKey") != null)
+			{
+				//if shopping cart does not exist, create one for the session.
+				if(session.getAttribute("ShoppingCartItems") == null)
+				{
+					session.setAttribute("ShoppingCartItems") = new ArrayList<ShoppingCartItem>();			
+				}
+				
+				//add item to shopping cart.
+				
+				
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 		
 	}
 	

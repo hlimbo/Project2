@@ -8,9 +8,11 @@
 
 <H1 ALIGN="CENTER">GameDB Login Page</H1>
 
-<% if ( session.getAttribute("sessionKey") != null ){ %>
+
+<!-- can only obtain values from httprequest and httpresponse -->
+<% if ( session.getAttribute("loginKey") != null ){ %>
 	<p id="invalid_flag">email or password is invalid</p>
-	<p> Session Key <%= session.getAttribute("sessionKey") %> </p>
+	<p> Session Key <%= session.getAttribute("loginKey") %> </p>
 <% } %>
 
 <FORM ACTION="/LoginPage/servlet/loginSuccess"
