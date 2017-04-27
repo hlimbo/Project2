@@ -118,7 +118,7 @@ public class DisplayServlet extends HttpServlet
                     statement=dbcon.prepareStatement(query);
                     rs = statement.executeQuery();
                     results += "<td><TABLE border>";
-                    boolean parentAdded = false;
+                    //boolean parentAdded = false;
                     ArrayList<String> fields = new ArrayList<String>();
 
                     int k = 0;
@@ -134,7 +134,7 @@ public class DisplayServlet extends HttpServlet
                                 parentStatement.setString(1,rs.getString(i));
                                 ResultSet parentResult = parentStatement.executeQuery();
                                 ResultSetMetaData parentMeta = parentResult.getMetaData();
-                                if (!parentAdded) {
+                                /*if (!parentAdded) {
                                     results+="<tr>";
                                     for (int j=1;j<=parentMeta.getColumnCount();++j) {
                                         String parentColumn = parentMeta.getColumnName(j);
@@ -146,7 +146,7 @@ public class DisplayServlet extends HttpServlet
                                     }
                                     parentAdded=true;
                                     results+="</tr>";
-                                }
+                                }*/
                                 //results+="<tr>";
                                 while (parentResult.next()) {
                                     for (int j=1;j<=parentMeta.getColumnCount();++j) {
@@ -162,9 +162,9 @@ public class DisplayServlet extends HttpServlet
                                             String fieldUrl = "/display/query?table="+parentTable+
                                                 "&columnName="+parentColumn+"&"+parentColumn+"="+
                                                 URLEncoder.encode(fieldValue,"UTF-8");
-                                            fieldValue="<td><a href=\""+fieldUrl+"\">"+fieldValue+"</a></td>";
+                                            fieldValue="<td>"+parentColumn+": <a href=\""+fieldUrl+"\">"+fieldValue+"</a></td>";
                                         } else {
-                                            fieldValue="<td>"+fieldValue+"</td>";
+                                            fieldValue="<td>"+parentColumn+": "+fieldValue+"</td>";
                                         }
                                         if (fields.size() > k) {
                                             fields.set(k,fields.get(k)+fieldValue);
