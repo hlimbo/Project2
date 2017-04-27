@@ -24,12 +24,15 @@
 				-without this attribute field specified, the next page will not know what button was pressed in the previous page.
 		-->
 		<form name="form1" action="basic.jsp" method="POST">
-			<input type="hidden" name="buttonName">
-			<input type="button" value="button 1" onclick="button1()">
-			<input type="button" value="button 2" onclick="button2()">
-			<input type="button" value="button 3" onclick="button3()">
+		
+			<div><input type="hidden" name="buttonName">
+			<div><input type="button" value="button 1" onclick="button1()">
+			<div><input type="button" value="button 2" onclick="button2()">
+			<div><input type="button" value="button 3" onclick="button3()">
 		</form>
 		
+		
+		<!-- TODO(HARVEY): have future javascript code included in another file -->
 		<script language="JavaScript">
 			function button1()
 			{
