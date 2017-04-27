@@ -36,10 +36,13 @@ public class ShoppingCart extends HttpServlet
 			synchronized(session)
 			{
 				//if(session.getAttribute("loginKey") != null)
+				//ArrayList<ShoppingCartItem> previousItems = (ArrayList<ShoppingCartItem>)session.getAttribute("ShoppingCartItems");
+				
 				ArrayList previousItems = (ArrayList)session.getAttribute("ShoppingCartItems");
 				if(previousItems == null)
 				{
-					previousItems = new ArrayList();
+					//previousItems = new ArrayList<ShoppingCartItem>();
+					previousItems = new ArrayList<>();
 					session.setAttribute("ShoppingCartItems", previousItems);
 				}
 			}
