@@ -171,6 +171,13 @@ public class SearchServlet extends HttpServlet
             links.put("publisher",true);
             links.put("genre",true);
             links.put("platform",true);
+            ResultSetMetaData meta = rs.getMetaData();
+            results+="<tr>";
+            for (int i=1;i<=meta.getColumnCount();++i) {
+                String column = meta.getColumnName(i);
+                results+="<td>"+column+"</td>";
+            }
+            results+="</tr>";
             while (rs.next())
             {
                 results+=tableRow(rs,links,table);

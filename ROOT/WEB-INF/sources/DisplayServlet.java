@@ -92,7 +92,7 @@ public class DisplayServlet extends HttpServlet
             String results = "<TABLE border>";
             //Sets which fields to not display to client. Configuration option
             Hashtable<String,Boolean> fieldIgnores = new Hashtable<String,Boolean>();
-            fieldIgnores.put("id",true);
+            //fieldIgnores.put("id",true);
             fieldIgnores.put("platform_id",true);
             fieldIgnores.put("game_id",true);
             fieldIgnores.put("genre_id",true);
@@ -118,6 +118,10 @@ public class DisplayServlet extends HttpServlet
                     statement=dbcon.prepareStatement(query);
                     rs = statement.executeQuery();
                     results += "<td><TABLE border>";
+                    boolean parentAdded = false;
+                    ArrayList<String> fields = new ArrayList<String>();
+
+                    int k = 0;
                     while (rs.next()) {
                         ResultSetMetaData meta = rs.getMetaData();
                         for (int i=1;i<=meta.getColumnCount();++i) {
@@ -129,16 +133,30 @@ public class DisplayServlet extends HttpServlet
                                 PreparedStatement parentStatement=dbcon.prepareStatement(query);
                                 parentStatement.setString(1,rs.getString(i));
                                 ResultSet parentResult = parentStatement.executeQuery();
-                                while (parentResult.next()) {
+                                ResultSetMetaData parentMeta = parentResult.getMetaData();
+                                if (!parentAdded) {
                                     results+="<tr>";
-                                    ResultSetMetaData parentMeta = parentResult.getMetaData();
+                                    for (int j=1;j<=parentMeta.getColumnCount();++j) {
+                                        String parentColumn = parentMeta.getColumnName(j);
+                                        if (fieldIgnores.containsKey(parentColumn) && fieldIgnores.get(parentColumn)
+                                                && (parentTable.compareToIgnoreCase("games") != 0 || parentColumn.compareToIgnoreCase("id") != 0)) {
+                                            continue;
+                                        }
+                                        results+="<td>"+parentColumn+"</td>";
+                                    }
+                                    parentAdded=true;
+                                    results+="</tr>";
+                                }
+                                //results+="<tr>";
+                                while (parentResult.next()) {
                                     for (int j=1;j<=parentMeta.getColumnCount();++j) {
                                         String parentColumn = parentMeta.getColumnName(j);
                                         if (parentColumn.compareToIgnoreCase("id")==0 && parentTable.compareToIgnoreCase("games")==0) {
                                             gameID=Integer.toString(parentResult.getInt(1));
                                         }
                                         String fieldValue = parentResult.getString(j);
-                                        if (fieldIgnores.containsKey(parentColumn) && fieldIgnores.get(parentColumn)) {
+                                        if (fieldIgnores.containsKey(parentColumn) && fieldIgnores.get(parentColumn)
+                                                && (parentTable.compareToIgnoreCase("games") != 0 || parentColumn.compareToIgnoreCase("id") != 0)) {
                                             continue;
                                         } else if (links.containsKey(parentColumn) && links.get(parentColumn)) {
                                             String fieldUrl = "/display/query?table="+parentTable+
@@ -148,17 +166,26 @@ public class DisplayServlet extends HttpServlet
                                         } else {
                                             fieldValue="<td>"+fieldValue+"</td>";
                                         }
-                                        results+=fieldValue;
+                                        if (fields.size() > k) {
+                                            fields.set(k,fields.get(k)+fieldValue);
+                                        } else {
+                                            fields.add(k,fieldValue);
+                                        }
+                                        //results+=fieldValue;
                                     }
-                                    results+="</tr>";
                                     if (parentTable.trim().compareToIgnoreCase("games")==0) {
-                                        results+=cartButton(gameID);
+                                        //results+=cartButton(gameID);
+                                        fields.set(k,fields.get(k)+cartButton(gameID));
                                     }
                                 }
+                                //results+="</tr>";
                                 parentResult.close();
                                 parentStatement.close();
                             }
                         }
+                    }
+                    for (String fld : fields) {
+                        results+="<tr>"+fld+"</tr>";
                     }
                     results += "</td></TABLE>";
                     results+="</tr>\n";
