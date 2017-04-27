@@ -13,7 +13,7 @@ public class LoginPage extends HttpServlet
 {
     public String getServletInfo()
     {
-       return "Servlet connects to MySQL database and displays result of a SELECT";
+       return "Servlet connects to database to verify login credentials user entered in";
     }
 
     // Use http GET
