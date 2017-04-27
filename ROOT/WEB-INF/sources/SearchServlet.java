@@ -33,9 +33,16 @@ public class SearchServlet extends HttpServlet
                     statement.setString(offset,"%"+subvalue+"%");
                     offset+=1;
                 }
-                //statement.setString(offset,"%"+value+"%");
             }
             return offset;
+    }
+
+    private String cartButton (String value) {
+        String button = "<tr><td><form action=\"TODO\" method=\"GET\">";
+        button+="<input type=\"HIDDEN\" id=\""+value+"\" \\>";
+        button+="<input type=\"SUBMIT\" value=\"Checkout\" \\>";
+        button+="</form></td></tr>";
+        return button;
     }
 
 	private static String tableRow (ResultSet result,Hashtable<String,Boolean> link,String table) throws SQLException {
@@ -164,9 +171,17 @@ public class SearchServlet extends HttpServlet
             links.put("publisher",true);
             links.put("genre",true);
             links.put("platform",true);
+            ResultSetMetaData meta = rs.getMetaData();
+            results+="<tr>";
+            for (int i=1;i<=meta.getColumnCount();++i) {
+                String column = meta.getColumnName(i);
+                results+="<td>"+column+"</td>";
+            }
+            results+="</tr>";
             while (rs.next())
             {
                 results+=tableRow(rs,links,table);
+                results+=cartButton(Integer.toString(rs.getInt(1)));
             }
             results+="</TABLE>";
 
