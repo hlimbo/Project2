@@ -40,26 +40,26 @@ public class LoginPage extends HttpServlet
               Class.forName("com.mysql.jdbc.Driver").newInstance();
 
               Connection dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
-              // Declare our statement
-              Statement statement = dbcon.createStatement();
-
+				
+			  Statement statement = dbcon.createStatement();	
+				
 			  String email = request.getParameter("email");
-              String query = "SELECT * from customers where email = '" + email + "'";
-			  Statement emailStatement = dbcon.createStatement();
-			  
-			 
-			String password = request.getParameter("password");
-			String passwordQuery = "Select * from customers where password = '" + password + "'"; 
-			Statement statement2 = dbcon.createStatement();
-			
-			ResultSet es = emailStatement.executeQuery(query);
-			ResultSet ps = statement2.executeQuery(passwordQuery);
+			  String password = request.getParameter("password");
+              String query = "SELECT * from customers where email = '" + email + "'" + " and password = '" + password + "'";
+			  ResultSet result = statement.executeQuery(query);
 			
 			//use a session key for the client.
+			HttpSession session = request.getSession();
 			
 			
-			if(es.next() && ps.next())
+			if(result.next())
 			{
+				Cookie cookie = new Cookie("login-cookie", session.getId());
+				cookie.setComment("Cook on client side used to identify the current user login");
+				//TODO(HARVEY):cookie.setDomain("http://localhost:8080");
+				//TODO(HARVEY): review cookie.setPath()
+				response.addCookie(cookie);
+				session.setAttribute("first_name",result.getString("first_name"));
 				out.println("Login successful!");
 			}
 			else
@@ -67,12 +67,14 @@ public class LoginPage extends HttpServlet
 				try
 				{
 					//client side
-					response.sendRedirect("http://localhost:8080/LoginPage/");
-					HttpSession session = request.getSession();
-					session.setAttribute("loginKey", session.getId());
+					//response.sendRedirect("http://localhost:8080/LoginPage/");
+					//session.setAttribute("loginKey", session.getId());
+					session.setAttribute("invalidLoginFlag", "Invalid email or password");
+					response.sendRedirect("http://localhost:8080/LoginPage");
 				}
 				catch (IOException e)
 				{
+					e.printStackTrace();
 				}
 				//out.println("Login failure... Wrong password!");
 			}

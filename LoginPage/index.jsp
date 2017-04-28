@@ -10,15 +10,20 @@
 
 
 <!-- can only obtain values from httprequest and httpresponse -->
-<% if ( session.getAttribute("loginKey") != null ){ %>
-	<p id="invalid_flag">email or password is invalid</p>
-	<p> Session Key <%= session.getAttribute("loginKey") %> </p>
+<% if ( session.getAttribute("invalidLoginFlag") != null){ %>
+	<p><%= session.getAttribute("invalidLoginFlag") %></p>
+	 <% session.setAttribute("invalidLoginFlag", null); %>
+<% } %>
+
+<% if ( session.getAttribute("first_name") != null ) { %>
+	<p> Welcome, <%= session.getAttribute("first_name") %> </p>
+	<% session.setAttribute("first_name", null); %>
 <% } %>
 
 <FORM ACTION="/LoginPage/servlet/loginSuccess"
       METHOD="POST">
+<FORM ACTION="/LoginPage/LoginSuccess.jsp" METHOD="POST">
   Email: <INPUT type="email" name="email" required><BR>
-
   Password: <INPUT type="password" name="password" required><BR>
   <CENTER>
     <INPUT TYPE="SUBMIT" VALUE="Login">
