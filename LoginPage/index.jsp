@@ -15,13 +15,6 @@
 	 <% session.setAttribute("invalidLoginFlag", null); %>
 <% } %>
 
-<% if ( session.getAttribute("first_name") != null ) { %>
-	<p> Welcome, <%= session.getAttribute("first_name") %> </p>
-	<% session.setAttribute("first_name", null); %>
-<% } %>
-
-<FORM ACTION="/LoginPage/servlet/loginSuccess"
-      METHOD="POST">
 <FORM ACTION="/LoginPage/LoginSuccess.jsp" METHOD="POST">
   Email: <INPUT type="email" name="email" required><BR>
   Password: <INPUT type="password" name="password" required><BR>

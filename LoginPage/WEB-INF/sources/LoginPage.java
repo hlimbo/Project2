@@ -26,14 +26,7 @@ public class LoginPage extends HttpServlet
         String loginUrl = "jdbc:mysql://localhost:3306/gamedb";
 
         response.setContentType("text/html");    // Response mime type
-
-        // Output stream to STDOUT
-        PrintWriter out = response.getWriter();
-
-        out.println("<HTML><HEAD><TITLE>GameDB: Found Records</TITLE></HEAD>");
-        out.println("<BODY><H1>GameDB: Found Records</H1>");
-
-
+		
         try
            {
               //Class.forName("org.gjt.mm.mysql.Driver");
@@ -60,16 +53,12 @@ public class LoginPage extends HttpServlet
 				//TODO(HARVEY): review cookie.setPath()
 				response.addCookie(cookie);
 				session.setAttribute("first_name",result.getString("first_name"));
-				out.println("Login successful!");
 				response.sendRedirect("http://localhost:8080/LoginPage/LoginSuccess.jsp");
 			}
 			else
 			{
 				try
 				{
-					//client side
-					//response.sendRedirect("http://localhost:8080/LoginPage/");
-					//session.setAttribute("loginKey", session.getId());
 					session.setAttribute("invalidLoginFlag", "Invalid email or password");
 					response.sendRedirect("http://localhost:8080/LoginPage");
 				}
@@ -77,39 +66,9 @@ public class LoginPage extends HttpServlet
 				{
 					e.printStackTrace();
 				}
-				//out.println("Login failure... Wrong password!");
 			}
 			
-			 
-              // Perform the query
-              ResultSet rs = statement.executeQuery(query);
-			
-              out.println("<TABLE border>");
-
-              // Iterate through each row of rs
-	      out.println("<tr>" +
-			  "<td>" + "ID" + "</td>" +
-			  "<td>" + "First Name" + "</td>" +
-			  "<td>" + "Last Name" + "</td>" +
-			  "<td>" + "Password" + "</td>" +
-			  "</tr>");
-              while (rs.next())
-              {
-                  String m_ID = rs.getString("cc_id");
-                  String m_FN = rs.getString("first_name");
-                  String m_LN = rs.getString("last_name");
-				  String m_pass = rs.getString("password");
-                  out.println("<tr>" +
-                              "<td>" + m_ID + "</td>" +
-                              "<td>" + m_FN + "</td>" +
-                              "<td>" + m_LN + "</td>" +
-							  "<td>" + m_pass + "</td>" +
-                              "</tr>");
-              }
-              out.println("</TABLE>");
-
-              rs.close();
-              statement.close();
+			  result.close();
               dbcon.close();
             }
         catch (SQLException ex) {
@@ -121,7 +80,7 @@ public class LoginPage extends HttpServlet
 
         catch(java.lang.Exception ex)
             {
-                out.println("<HTML>" +
+                System.out.println("<HTML>" +
                             "<HEAD><TITLE>" +
                             "MovieDB: Error" +
                             "</TITLE></HEAD>\n<BODY>" +
@@ -129,7 +88,6 @@ public class LoginPage extends HttpServlet
                             ex.getMessage() + "</P></BODY></HTML>");
                 return;
             }
-         out.close();
     }
     
     public void doPost(HttpServletRequest request, HttpServletResponse response)
