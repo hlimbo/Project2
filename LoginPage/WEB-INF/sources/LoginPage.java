@@ -44,9 +44,10 @@ public class LoginPage extends HttpServlet
 			//use a session key for the client.
 			HttpSession session = request.getSession();
 			
-			
-			if(result.next())
+			boolean rnext = result.next();
+			if(rnext)
 			{
+				System.out.println("Success!");
 				Cookie cookie = new Cookie("login-cookie", session.getId());
 				cookie.setComment("Cook on client side used to identify the current user login");
 				//TODO(HARVEY):cookie.setDomain("http://localhost:8080");
@@ -59,6 +60,7 @@ public class LoginPage extends HttpServlet
 			{
 				try
 				{
+					System.out.println("Invalid username or password");
 					session.setAttribute("invalidLoginFlag", "Invalid email or password");
 					response.sendRedirect("http://localhost:8080/LoginPage");
 				}

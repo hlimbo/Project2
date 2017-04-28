@@ -15,7 +15,7 @@
 	 <% session.setAttribute("invalidLoginFlag", null); %>
 <% } %>
 
-<FORM ACTION="/LoginPage/LoginSuccess.jsp" METHOD="POST">
+<FORM ACTION="/LoginPage/servlet/loginSuccess" METHOD="POST">
   Email: <INPUT type="email" name="email" required><BR>
   Password: <INPUT type="password" name="password" required><BR>
   <CENTER>
