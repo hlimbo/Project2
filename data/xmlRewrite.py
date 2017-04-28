@@ -12,7 +12,7 @@ with open(FILE_NAME,"r") as xmlFile:
         line=line.replace("<Data>","<"+DATA_TAG_RENAME+">")
         line=line.replace("</Data>","</"+DATA_TAG_RENAME+">")
         xml+=line
-xml +="</DATA>"
+xml +="</Data>"
 
 with open("new_"+FILE_NAME,"w") as xmlFile:
     xmlFile.write(xml)
