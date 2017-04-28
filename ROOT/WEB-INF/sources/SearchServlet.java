@@ -25,12 +25,18 @@ public class SearchServlet extends HttpServlet
             return searchTerm;
     }
 
-    private int setSearchTerm (HttpServletRequest request, String term, PreparedStatement statement, int offset) throws SQLException {
+    private int setSearchTerm (HttpServletRequest request, String term, PreparedStatement statement, 
+            int offset, boolean useSubMatch) throws SQLException {
             String value = (String) request.getParameter(term);
             String searchTerm = "";
             if (value != null && value.trim() != "") {
-                for (String subvalue : value.split(" ")) {
-                    statement.setString(offset,"%"+subvalue+"%");
+                if (useSubMatch) {
+                    for (String subvalue : value.split(" ")) {
+                        statement.setString(offset,"%"+subvalue+"%");
+                        offset+=1;
+                    }
+                } else {
+                    statement.setString(offset,value);
                     offset+=1;
                 }
             }
@@ -138,6 +144,19 @@ public class SearchServlet extends HttpServlet
                 offset = offset.replaceAll("[\\D]","");
             }
 
+            String order = (String) request.getParameter("order");
+            if (order==null) {
+                order="id";
+            } else {
+                order = order.replaceAll("[^\\w]","_");
+            }
+
+            String matchParameter = (String) request.getParameter("match");
+            boolean useSubMatch = false;
+            if (matchParameter.compareToIgnoreCase("true") == 0) {
+                useSubMatch = true;
+            }
+
             String masterTable = "((SELECT id AS game_id FROM games) AS g_id NATURAL JOIN "
                 +"publishers_of_games NATURAL JOIN genres_of_games NATURAL JOIN (SELECT id AS publisher_id FROM publishers) AS p_id "
                 +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN (SELECT id AS platform_id FROM platforms) AS l_id"
@@ -149,15 +168,15 @@ public class SearchServlet extends HttpServlet
             query+=addSearchTerm(request,"publisher");
             query+=addSearchTerm(request,"genre");
             query+=addSearchTerm(request,"platform");
-            query+=" LIMIT "+limit+" OFFSET "+offset;
+            query+="ORDER BY "+order+" LIMIT "+limit+" OFFSET "+offset;
 
             // Perform the query
             statement = dbcon.prepareStatement(query);
             int statementOffset = 1;
-            statementOffset = setSearchTerm(request,"name",statement,statementOffset);
-            statementOffset = setSearchTerm(request,"publisher",statement,statementOffset);
-            statementOffset = setSearchTerm(request,"genre",statement,statementOffset);
-            statementOffset = setSearchTerm(request,"platform",statement,statementOffset);
+            statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"publisher",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"genre",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"platform",statement,statementOffset,useSubMatch);
             /*statement.setString(1,limit);
             statement.setString(2,offset);*/
             ResultSet rs = statement.executeQuery();
