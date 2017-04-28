@@ -1,11 +1,11 @@
 import json
 
 #configuration options
-FILE_NAME= "publisher_logos.json"
-TABLE = "publishers"
+FILE_NAME= "game_logos.json"
+TABLE = "games"
 NEW_COLUMN = "logo"
-NEW_COLUMN_TYPE=NEW_COLUMN+" VARCHAR(255)"
-JSON_KEY="publisher"
+NEW_COLUMN_TYPE=NEW_COLUMN+" VARCHAR(511)"
+JSON_KEY="name"
 
 
 data = None
