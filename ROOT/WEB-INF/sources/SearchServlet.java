@@ -13,11 +13,16 @@ public class SearchServlet extends HttpServlet
         return "Servlet connects to MySQL database and displays result of a SELECT";
     }
 
-    private String addSearchTerm (HttpServletRequest request, String term) {
+    private String addSearchTerm (HttpServletRequest request, String term, boolean useSubMatch) {
             String value = (String) request.getParameter(term);
             String searchTerm = "";
             if (value != null && value.trim() != "") {
-                for (String subvalue : value.split(" ")) {
+                if (!useSubMatch) {
+                    for (String subvalue : value.split(" ")) {
+                        searchTerm+=" AND ";
+                        searchTerm+=term+" LIKE ?";
+                    }
+                } else {
                     searchTerm+=" AND ";
                     searchTerm+=term+" LIKE ?";
                 }
@@ -30,7 +35,7 @@ public class SearchServlet extends HttpServlet
             String value = (String) request.getParameter(term);
             String searchTerm = "";
             if (value != null && value.trim() != "") {
-                if (useSubMatch) {
+                if (!useSubMatch) {
                     for (String subvalue : value.split(" ")) {
                         statement.setString(offset,"%"+subvalue+"%");
                         offset+=1;
@@ -153,7 +158,7 @@ public class SearchServlet extends HttpServlet
 
             String matchParameter = (String) request.getParameter("match");
             boolean useSubMatch = false;
-            if (matchParameter.compareToIgnoreCase("true") == 0) {
+            if (matchParameter != null && matchParameter.compareToIgnoreCase("true") == 0) {
                 useSubMatch = true;
             }
 
@@ -164,10 +169,10 @@ public class SearchServlet extends HttpServlet
             //duplicates due to games on multiple platforms, with multiple genres, or etc...
             query = "SELECT DISTINCT "+table+".* FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
                 +"games.id=game_id AND publishers.id=publisher_id AND platforms.id=platform_id";
-            query+=addSearchTerm(request,"name");
-            query+=addSearchTerm(request,"publisher");
-            query+=addSearchTerm(request,"genre");
-            query+=addSearchTerm(request,"platform");
+            query+=addSearchTerm(request,"name",useSubMatch);
+            query+=addSearchTerm(request,"publisher",useSubMatch);
+            query+=addSearchTerm(request,"genre",useSubMatch);
+            query+=addSearchTerm(request,"platform",useSubMatch);
             query+="ORDER BY "+order+" LIMIT "+limit+" OFFSET "+offset;
 
             // Perform the query
@@ -177,8 +182,6 @@ public class SearchServlet extends HttpServlet
             statementOffset = setSearchTerm(request,"publisher",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"genre",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"platform",statement,statementOffset,useSubMatch);
-            /*statement.setString(1,limit);
-            statement.setString(2,offset);*/
             ResultSet rs = statement.executeQuery();
 
             String results = "";

@@ -8,7 +8,7 @@
     genre: <input type="TEXT" name="genre" /> <BR />
     platform: <input type="TEXT" name="platform" /> <BR />
     publisher: <input type="TEXT" name="publisher" /> <BR />
-    use sql substring matching?: <input type="checkbox" name="match" value="true" /> <BR />
+    exact search?: <input type="checkbox" name="match" value="true" /> <BR />
     <input type="HIDDEN" name="forward" <%= "value="+request.getRequestURI() %> />
     <center>
         <input type="SUBMIT" value="Search" />
