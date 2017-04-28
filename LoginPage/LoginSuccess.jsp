@@ -5,6 +5,6 @@
 	
 	<BODY>
 		<H1>Login Successful</H1>
-		<p> Welcome, <%= request.getParameter("first_name") %>! </p>
+		<p> Welcome, <%= (String)session.getAttribute("first_name") %>! </p>
 	</BODY>
 </HTML>

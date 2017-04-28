@@ -61,6 +61,7 @@ public class LoginPage extends HttpServlet
 				response.addCookie(cookie);
 				session.setAttribute("first_name",result.getString("first_name"));
 				out.println("Login successful!");
+				response.sendRedirect("http://localhost:8080/LoginPage/LoginSuccess.jsp");
 			}
 			else
 			{
