@@ -21,9 +21,9 @@
 
 <web-app>
 
-    <display-name>Test Tomcat Connection to MySQL DB</display-name>
+    <display-name>Game Website Login Page</display-name>
     <description>
-      Test Tomcat Connection to mySQL DB
+      Game Website Login Page
     </description>
 
 
