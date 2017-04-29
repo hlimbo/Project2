@@ -46,4 +46,15 @@
     <url-pattern>/display/query</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>LoginFormServlet</servlet-name>
+    <servlet-class>LoginPage</servlet-class>
+  </servlet>
+
+
+  <servlet-mapping>
+    <servlet-name>LoginFormServlet</servlet-name>
+    <url-pattern>/servlet/loginSuccess</url-pattern>
+  </servlet-mapping>
+
 </web-app>

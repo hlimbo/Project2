@@ -24,7 +24,7 @@ limitations under the License.
     </head>
 
     <body>
-        <% if (session.getAttribute("invalidLoginFlag") != null) { %>
+        <% if (session.getAttribute("first_name") != null) { %>
             <jsp:include page="search/search.jsp" />
         <% } else { %>
             <a href="/LoginPage">Login</a> 
