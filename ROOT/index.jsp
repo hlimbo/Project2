@@ -14,7 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 --%>
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" 
+    import="java.util.*" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -25,6 +26,32 @@ limitations under the License.
 
     <body>
         <% if (session.getAttribute("first_name") != null) { %>
+            Browse by 
+        <ul>
+            <%  ArrayList<String> tables = new ArrayList<String>();
+                tables.add("genres");
+                tables.add("publishers");
+                tables.add("platforms");
+                tables.add("games");
+                for (String table : tables) { %>
+                <li><a href="/search/query?table="<%= table %>><%= table %></a>
+                    <ul>
+                        <% for (char firstLetter = 'a';firstLetter<='z';++firstLetter) { 
+                            String column;
+                            if (table.compareToIgnoreCase("games")!=0) { 
+                                column = table.substring(0,table.length()-1);
+                            } else { 
+                                column = "name";
+                            } %>
+                            <%= "<li><a href=\"search/query?table="+table+"&columnName="+column
+                                +"&"+column+"="+firstLetter+"%25&match=true\" >"+(""+firstLetter).toUpperCase()
+                                +"</a></li>" %>
+                        <% } %>
+                    </ul>
+                </li>
+            <% } %>
+        </ul>
+            Search
             <jsp:include page="search/search.jsp" />
         <% } else { %>
             <a href="/LoginPage">Login</a> 
