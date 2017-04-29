@@ -7,14 +7,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 
-//The servlet's job should be to:
-// 1. redirect the user to the proper jsp webpage.
-// 2. authenticate user credentials
-// 3. query for certain items to be found in the database. i.e. game id, genre id.
-
-//TODO(HARVEY): use attributes from session to add items to the user's cart.
-//TODO(HARVEY): sendRedirect to another webpage that displays shoppping cart contents
-public class ShoppingCart extends HttpServlet
+//TODO(HARVEY): Find a way to import a separate java file in the same directory via packages.
+public class ShoppingCartDisplay extends HttpServlet
 {	
 	public String getServletInfo()
 	{
@@ -39,10 +33,7 @@ public class ShoppingCart extends HttpServlet
 			}
 		}
 		
-		System.out.println("going to the next page!");
-		response.sendRedirect("http://localhost:8080/ShoppingCart/AddToCartDisplay.jsp");
-		
-	/* 	//retrieve the newItem to be added to cart from HttpServletRequest
+		//retrieve the newItem to be added to cart from HttpServletRequest
 		String newItem = request.getParameter("newItem");
 		
 		//have java generate the HTML code for the user to see.
@@ -83,7 +74,7 @@ public class ShoppingCart extends HttpServlet
 	   
 	   out.println("</BODY></HTML>");
 	   
-	   out.close(); */
+	   out.close();
 	}
 	
 	/* public void doPost(HttpServletRequest request, HttpServletResponse response)

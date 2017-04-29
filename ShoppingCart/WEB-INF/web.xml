@@ -33,12 +33,20 @@
   <servlet>
     <servlet-name>ShoppingCartServlet</servlet-name>
     <servlet-class>ShoppingCart</servlet-class>
+	
+	<!-- <servlet-name>ShoppingCartDisplayServlet</servlet-name>
+	<servlet-class>ShoppingCartDisplay</servlet-class> -->
   </servlet>
 
 
   <servlet-mapping>
-    <servlet-name>ShoppingCartServlet</servlet-name>
+   <servlet-name>ShoppingCartServlet</servlet-name>
     <url-pattern>/servlet/ShoppingCart</url-pattern>
+  
+	<!-- <servlet-name>ShoppingCartDisplayServlet</servlet-name>
+	<url-pattern>/servlet/customer-info</url-pattern> -->
+  
   </servlet-mapping>
+  
 
 </web-app>
