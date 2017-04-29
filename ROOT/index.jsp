@@ -19,14 +19,15 @@ limitations under the License.
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Login Hi there :D</title>
+        <title>Welcome</title>
         <link href="/tomcat.css" rel="stylesheet" type="text/css" />
     </head>
 
     <body>
-        Index page accessed. TODO. <br />
-        Example of including search component.
-        <a href="server.jsp">server</a>
-        <jsp:include page="search/search.jsp" />
+        <% if (session.getAttribute("invalidLoginFlag") != null) { %>
+            <jsp:include page="search/search.jsp" />
+        <% } else { %>
+            <a href="/LoginPage">Login</a> 
+        <% } %>
     </body>
 </html>
