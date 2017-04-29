@@ -38,7 +38,7 @@
 	<br><br>
 	
 	<!-- todo: make xml page for this transition -->
-	<form action="/ShoppingCart/servlet/ShoppingCart" METHOD="GET">
+	<form action="/servlet/ShoppingCart" METHOD="GET">
 	<button name="submit">Go to Checkout</button>
 	</form>
 	
