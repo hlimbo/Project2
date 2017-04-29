@@ -255,9 +255,22 @@ public class SearchServlet extends HttpServlet
 
             ResultSetMetaData meta = rs.getMetaData();
             results+="<tr>";
+            String requestUrl = "?"+request.getQueryString();
+            String requestUrlEnd = "";
+            int orderStart = requestUrl.indexOf("order=");
+            if (orderStart > -1) {
+                int orderEnd = requestUrl.substring(orderStart).indexOf("?");
+                if (orderEnd == -1) {
+                    requestUrl=requestUrl.substring(0,orderStart);
+                } else {
+                    requestUrl=requestUrl.substring(0,orderStart);
+                    requestUrlEnd=requestUrl.substring(orderStart+orderEnd);
+                }
+            }
             for (int i=1;i<=meta.getColumnCount();++i) {
                 String column = meta.getColumnName(i);
-                results+="<td>"+column+"</td>";
+                results+="<td><a href=\"/search/query"+requestUrl+"&order="+column
+                    +requestUrlEnd+"\">"+column+"</a></td>";
             }
             results+="</tr>";
             while (rs.next())
