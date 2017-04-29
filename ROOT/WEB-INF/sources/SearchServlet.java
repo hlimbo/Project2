@@ -13,11 +13,16 @@ public class SearchServlet extends HttpServlet
         return "Servlet connects to MySQL database and displays result of a SELECT";
     }
 
-    private String addSearchTerm (HttpServletRequest request, String term) {
+    private String addSearchTerm (HttpServletRequest request, String term, boolean useSubMatch) {
             String value = (String) request.getParameter(term);
             String searchTerm = "";
             if (value != null && value.trim() != "") {
-                for (String subvalue : value.split(" ")) {
+                if (!useSubMatch) {
+                    for (String subvalue : value.split(" ")) {
+                        searchTerm+=" AND ";
+                        searchTerm+=term+" LIKE ?";
+                    }
+                } else {
                     searchTerm+=" AND ";
                     searchTerm+=term+" LIKE ?";
                 }
@@ -25,12 +30,18 @@ public class SearchServlet extends HttpServlet
             return searchTerm;
     }
 
-    private int setSearchTerm (HttpServletRequest request, String term, PreparedStatement statement, int offset) throws SQLException {
+    private int setSearchTerm (HttpServletRequest request, String term, PreparedStatement statement, 
+            int offset, boolean useSubMatch) throws SQLException {
             String value = (String) request.getParameter(term);
             String searchTerm = "";
             if (value != null && value.trim() != "") {
-                for (String subvalue : value.split(" ")) {
-                    statement.setString(offset,"%"+subvalue+"%");
+                if (!useSubMatch) {
+                    for (String subvalue : value.split(" ")) {
+                        statement.setString(offset,"%"+subvalue+"%");
+                        offset+=1;
+                    }
+                } else {
+                    statement.setString(offset,value);
                     offset+=1;
                 }
             }
@@ -138,6 +149,19 @@ public class SearchServlet extends HttpServlet
                 offset = offset.replaceAll("[\\D]","");
             }
 
+            String order = (String) request.getParameter("order");
+            if (order==null) {
+                order="id";
+            } else {
+                order = order.replaceAll("[^\\w]","_");
+            }
+
+            String matchParameter = (String) request.getParameter("match");
+            boolean useSubMatch = false;
+            if (matchParameter != null && matchParameter.compareToIgnoreCase("true") == 0) {
+                useSubMatch = true;
+            }
+
             String masterTable = "((SELECT id AS game_id FROM games) AS g_id NATURAL JOIN "
                 +"publishers_of_games NATURAL JOIN genres_of_games NATURAL JOIN (SELECT id AS publisher_id FROM publishers) AS p_id "
                 +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN (SELECT id AS platform_id FROM platforms) AS l_id"
@@ -145,21 +169,19 @@ public class SearchServlet extends HttpServlet
             //duplicates due to games on multiple platforms, with multiple genres, or etc...
             query = "SELECT DISTINCT "+table+".* FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
                 +"games.id=game_id AND publishers.id=publisher_id AND platforms.id=platform_id";
-            query+=addSearchTerm(request,"name");
-            query+=addSearchTerm(request,"publisher");
-            query+=addSearchTerm(request,"genre");
-            query+=addSearchTerm(request,"platform");
-            query+=" LIMIT "+limit+" OFFSET "+offset;
+            query+=addSearchTerm(request,"name",useSubMatch);
+            query+=addSearchTerm(request,"publisher",useSubMatch);
+            query+=addSearchTerm(request,"genre",useSubMatch);
+            query+=addSearchTerm(request,"platform",useSubMatch);
+            query+="ORDER BY "+order+" LIMIT "+limit+" OFFSET "+offset;
 
             // Perform the query
             statement = dbcon.prepareStatement(query);
             int statementOffset = 1;
-            statementOffset = setSearchTerm(request,"name",statement,statementOffset);
-            statementOffset = setSearchTerm(request,"publisher",statement,statementOffset);
-            statementOffset = setSearchTerm(request,"genre",statement,statementOffset);
-            statementOffset = setSearchTerm(request,"platform",statement,statementOffset);
-            /*statement.setString(1,limit);
-            statement.setString(2,offset);*/
+            statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"publisher",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"genre",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"platform",statement,statementOffset,useSubMatch);
             ResultSet rs = statement.executeQuery();
 
             String results = "";
