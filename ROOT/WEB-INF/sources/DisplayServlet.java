@@ -13,12 +13,31 @@ public class DisplayServlet extends HttpServlet
         return "Servlet connects to MySQL database and displays a single record within the database";
     }
 
-    private String cartButton (String value) {
-        String button = "<tr><td><form action=\"TODO\" method=\"GET\">";
-        button+="<input type=\"HIDDEN\" id=\""+value+"\" \\>";
+    private String cartButton (String id, String name,String price, String quantity) {
+        String button = "<tr><td><form action=\"/ShoppingCart/AddToCartDisplay.jsp\" method=\"GET\">";
+        button+="<input type=\"HIDDEN\" name=id value=\""+id+"\" \\>";
+        button+="<input type=\"HIDDEN\" name=\"quantity\" value=\""+quantity+"\" \\>";
         button+="<input type=\"SUBMIT\" value=\"Checkout\" \\>";
         button+="</form></td></tr>";
         return button;
+    }
+
+    private String getValue (String table, String column, String fieldValue, 
+            Hashtable<String,Boolean> fieldIgnores, Hashtable<String,Boolean> links,
+            Hashtable<String,Boolean> images) throws UnsupportedEncodingException {
+        if (fieldIgnores.containsKey(column) && fieldIgnores.get(column)
+                && (table.compareToIgnoreCase("games") != 0 || column.compareToIgnoreCase("id") != 0)) {
+            return null;
+        } else if (links.containsKey(column) && links.get(column)) {
+            String fieldUrl = "/display/query?table="+table+
+                "&columnName="+column+"&"+column+"="+
+                URLEncoder.encode(fieldValue,"UTF-8");
+            return("<td>"+column+": <a href=\""+fieldUrl+"\">"+fieldValue+"</a></td>");
+        } else if (images.containsKey(column) && images.get(column)){
+            return ("<td><img src=\"http://"+fieldValue+"\" /></td>");
+        }else {
+            return ("<td>"+column+": "+fieldValue+"</td>");
+        }
     }
 
     // Use http GET
@@ -29,6 +48,7 @@ public class DisplayServlet extends HttpServlet
         String loginUser = "user";
         String loginPasswd = "password";
         String loginUrl = "jdbc:mysql://localhost:3306/gamedb";
+        String returnLink = "<a href=\"/\"> Return to home </a>";
 
         response.setContentType("text/html");    // Response mime type
 
@@ -62,7 +82,7 @@ public class DisplayServlet extends HttpServlet
                 +"NATURAL JOIN (SELECT id AS genre_id FROM genres) AS n_id NATURAL JOIN (SELECT id AS platform_id FROM platforms) AS l_id"
                 +" NATURAL JOIN platforms_of_games)";
             //duplicates due to games on multiple platforms, with multiple genres, or etc...
-            String query = "SELECT DISTINCT "+table+".id FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
+            String query = "SELECT DISTINCT "+table+".* FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
                 +"games.id=game_id AND publishers.id=publisher_id AND platforms.id=platform_id AND "+table+"."+column+"=?";
             statement = dbcon.prepareStatement(query);
             statement.setString(1,columnValue);
@@ -71,21 +91,26 @@ public class DisplayServlet extends HttpServlet
             ResultSet rs = statement.executeQuery();
 
             String id;
+            String gameID = "";
+            String gameName = "";
+            String gamePrice = "";
             if (rs.next()) {
                 id = rs.getString(1);
+                if (table.trim().compareToIgnoreCase("games") == 0) {
+                    gameID=id;
+                    gameName=rs.getString(3);
+                    gamePrice=rs.getString(6);
+                }
             } else {
                 rs.close();
                 statement.close();
+                dbcon.close();
                 return;
             }
             //Convert to column name of a relation table by naming convention of database. 
             //For example, publishers.id -> publisher_id
             String tableIDField = table.substring(0,table.length()-1)+"_id";
             String tableIDCond = tableIDField+"="+id;
-            String gameID = "";
-            if (table.trim().compareToIgnoreCase("games") == 0) {
-                gameID=id;
-            }
 
             statement.close();
             rs.close();
@@ -105,8 +130,31 @@ public class DisplayServlet extends HttpServlet
             links.put("publisher",true);
             links.put("genre",true);
             links.put("platform",true);
+            links.put("url",true);
+            links.put("trailer",true);
+            Hashtable<String,Boolean> images = new Hashtable<String,Boolean>();
+            images.put("logo",true);
 
-            results+="<tr><td>"+columnValue+"</td</tr>";
+            results+="<tr><td>"+columnValue+"</td></tr><tr>";
+            query="SELECT DISTINCT * FROM "+table+" WHERE id="+id;
+            statement=dbcon.prepareStatement(query);
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                ResultSetMetaData meta = rs.getMetaData();
+                for (int i=1;i<=meta.getColumnCount();++i) {
+                    String columnName = meta.getColumnName(i);
+                    String fieldValue = rs.getString(i);
+                    if (fieldValue == null) {
+                        continue;
+                    }
+                    fieldValue = getValue(table,columnName,fieldValue,fieldIgnores,links,images);
+                    if (fieldValue == null) {
+                        continue;
+                    }
+                    results+=fieldValue;
+                }
+                results+="</tr>\n";
+            }
             for (String tbl : tables) {
                 //by convention of SQL schema, relation tables contains name
                 //of entity tables. For example, publishers_of_games contains both
@@ -118,7 +166,6 @@ public class DisplayServlet extends HttpServlet
                     statement=dbcon.prepareStatement(query);
                     rs = statement.executeQuery();
                     results += "<td><TABLE border>";
-                    //boolean parentAdded = false;
                     ArrayList<String> fields = new ArrayList<String>();
 
                     int k = 0;
@@ -134,38 +181,37 @@ public class DisplayServlet extends HttpServlet
                                 parentStatement.setString(1,rs.getString(i));
                                 ResultSet parentResult = parentStatement.executeQuery();
                                 ResultSetMetaData parentMeta = parentResult.getMetaData();
-                                /*if (!parentAdded) {
-                                    results+="<tr>";
-                                    for (int j=1;j<=parentMeta.getColumnCount();++j) {
-                                        String parentColumn = parentMeta.getColumnName(j);
-                                        if (fieldIgnores.containsKey(parentColumn) && fieldIgnores.get(parentColumn)
-                                                && (parentTable.compareToIgnoreCase("games") != 0 || parentColumn.compareToIgnoreCase("id") != 0)) {
-                                            continue;
-                                        }
-                                        results+="<td>"+parentColumn+"</td>";
-                                    }
-                                    parentAdded=true;
-                                    results+="</tr>";
-                                }*/
-                                //results+="<tr>";
                                 while (parentResult.next()) {
                                     for (int j=1;j<=parentMeta.getColumnCount();++j) {
                                         String parentColumn = parentMeta.getColumnName(j);
                                         if (parentColumn.compareToIgnoreCase("id")==0 && parentTable.compareToIgnoreCase("games")==0) {
                                             gameID=Integer.toString(parentResult.getInt(1));
+                                            gameName=parentResult.getString(3);
+                                            gamePrice=parentResult.getString(6);
                                         }
                                         String fieldValue = parentResult.getString(j);
-                                        if (fieldIgnores.containsKey(parentColumn) && fieldIgnores.get(parentColumn)
-                                                && (parentTable.compareToIgnoreCase("games") != 0 || parentColumn.compareToIgnoreCase("id") != 0)) {
+                                        if (fieldValue == null) {
                                             continue;
-                                        } else if (links.containsKey(parentColumn) && links.get(parentColumn)) {
-                                            String fieldUrl = "/display/query?table="+parentTable+
-                                                "&columnName="+parentColumn+"&"+parentColumn+"="+
-                                                URLEncoder.encode(fieldValue,"UTF-8");
-                                            fieldValue="<td>"+parentColumn+": <a href=\""+fieldUrl+"\">"+fieldValue+"</a></td>";
-                                        } else {
-                                            fieldValue="<td>"+parentColumn+": "+fieldValue+"</td>";
                                         }
+                                        if (parentColumn.compareToIgnoreCase("url") == 0) {
+                                            fieldValue = getValue(parentTable,"trailer",fieldValue,fieldIgnores,links,images);
+                                        } else {
+                                            fieldValue = getValue(parentTable,parentColumn,fieldValue,fieldIgnores,links,images);
+                                        }
+                                        if (fieldValue == null) {
+                                            continue;
+                                        }
+                                        //if (fieldIgnores.containsKey(parentColumn) && fieldIgnores.get(parentColumn)
+                                        //        && (parentTable.compareToIgnoreCase("games") != 0 || parentColumn.compareToIgnoreCase("id") != 0)) {
+                                        //    continue;
+                                        //} else if (links.containsKey(parentColumn) && links.get(parentColumn)) {
+                                        //    String fieldUrl = "/display/query?table="+parentTable+
+                                        //        "&columnName="+parentColumn+"&"+parentColumn+"="+
+                                        //        URLEncoder.encode(fieldValue,"UTF-8");
+                                        //    fieldValue="<td>"+parentColumn+": <a href=\""+fieldUrl+"\">"+fieldValue+"</a></td>";
+                                        //} else {
+                                        //    fieldValue="<td>"+parentColumn+": "+fieldValue+"</td>";
+                                        //}
                                         if (fields.size() > k) {
                                             fields.set(k,fields.get(k)+fieldValue);
                                         } else {
@@ -173,7 +219,7 @@ public class DisplayServlet extends HttpServlet
                                         }
                                     }
                                     if (parentTable.trim().compareToIgnoreCase("games")==0) {
-                                        fields.set(k,fields.get(k)+cartButton(gameID));
+                                        fields.set(k,fields.get(k)+cartButton(gameID,gameName,gamePrice,"1"));
                                     }
                                 }
                                 parentResult.close();
@@ -190,7 +236,7 @@ public class DisplayServlet extends HttpServlet
                 }
             }
             if (table.compareToIgnoreCase("games") == 0) {
-                results+=cartButton(gameID);
+                results+=cartButton(gameID,gameName,gamePrice,"1");
             }
             results+="</TABLE>";
 
@@ -219,10 +265,20 @@ public class DisplayServlet extends HttpServlet
                 out.println ("SQL Exception:  " + ex.getMessage ());
                 ex = ex.getNextException ();
             }  // end while
-                    out.println("</P></BODY></HTML>");
+            out.println("<br />\n"+returnLink+"</P></BODY></HTML>");
             out.close();
         }  // end catch SQLException
-
+        catch (UnsupportedEncodingException ex) {
+            PrintWriter out = response.getWriter();
+            out.println("<HTML>" +
+                    "<HEAD><TITLE>" +
+                    "gamedb: Error" +
+                    "</TITLE></HEAD>\n<BODY>" +
+                    "<P>UnsupportedEncodingException in doGet: " +
+                    ex.getMessage() + "<br />\n"+returnLink+"</P></BODY></HTML>");
+            out.close();
+            return;
+        }
         catch(java.lang.Exception ex)
         {
             PrintWriter out = response.getWriter();
@@ -230,8 +286,9 @@ public class DisplayServlet extends HttpServlet
                     "<HEAD><TITLE>" +
                     "gamedb: Error" +
                     "</TITLE></HEAD>\n<BODY>" +
-                    "<P>Error in doGet: " +
-                    ex.getMessage() + "</P></BODY></HTML>");
+                    "<P>Error in doGet: ");
+            ex.printStackTrace(out);
+            out.println(ex.getMessage() + "<br />\n"+returnLink+"</P></BODY></HTML>");
             out.close();
             return;
         }

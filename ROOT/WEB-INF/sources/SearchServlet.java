@@ -48,15 +48,17 @@ public class SearchServlet extends HttpServlet
             return offset;
     }
 
-    private String cartButton (String value) {
-        String button = "<tr><td><form action=\"TODO\" method=\"GET\">";
-        button+="<input type=\"HIDDEN\" id=\""+value+"\" \\>";
+    private String cartButton (String id, String quantity) {
+        String button = "<tr><td><form action=\"/ShoppingCart/AddToCartDisplay.jsp\" method=\"GET\">";
+        button+="<input type=\"HIDDEN\" name=id value=\""+id+"\" \\>";
+        button+="<input type=\"HIDDEN\" name=\"quantity\" value=\""+quantity+"\" \\>";
         button+="<input type=\"SUBMIT\" value=\"Checkout\" \\>";
         button+="</form></td></tr>";
         return button;
     }
 
-	private static String tableRow (ResultSet result,Hashtable<String,Boolean> link,String table) throws SQLException {
+	private static String tableRow (ResultSet result,String table, Hashtable<String,Boolean> link,
+            Hashtable<String,Boolean> images) throws SQLException {
 		ResultSetMetaData meta = result.getMetaData();
 	    String resString = "";
 		resString+="<tr>";
@@ -81,10 +83,11 @@ public class SearchServlet extends HttpServlet
 					break;
 				}
 			}
+            if (value==null) {
+                continue;
+            }
 			String colName = meta.getColumnName(i);
-            boolean makeLink = false;
             if  (link.containsKey(colName) && link.get(colName)) {
-                makeLink=true;
                 try {
 			        resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+
                         "&"+colName+"="+URLEncoder.encode(value,"UTF-8")+"\">";
@@ -94,13 +97,12 @@ public class SearchServlet extends HttpServlet
                 }
                 resString+=value;
                 resString+="</a></td>";
+            } else if (images.containsKey(colName) && images.get(colName)){
+                resString+="<td><img src=\"http://"+value+"\" /></td>";
             } else {
 			    resString+="<td>";
                 resString+=value;
 			    resString+="</td>";
-            }
-            if (makeLink) {
-            } else {
             }
 		}
 		resString+="</tr>";
@@ -119,6 +121,7 @@ public class SearchServlet extends HttpServlet
         response.setContentType("text/html");    // Response mime type
 
         String query = "";
+        String returnLink = "<a href=\"/\"> Return to home </a>";
         try
         {
             //Class.forName("org.gjt.mm.mysql.Driver");
@@ -141,12 +144,22 @@ public class SearchServlet extends HttpServlet
             } else {
                 limit = limit.replaceAll("[\\D]","");
             }
+            try {
+                request.setAttribute("searchLimit",Integer.parseInt(limit));
+            } catch (NumberFormatException ex) {
+                request.setAttribute("searchLimit",-1);
+            }
 
             String offset = (String) request.getParameter("offset");
             if (offset==null) {
                 offset="0";
             } else {
                 offset = offset.replaceAll("[\\D]","");
+            }
+            try {
+                request.setAttribute("searchOffset",Integer.parseInt(offset));
+            } catch (NumberFormatException ex) {
+                request.setAttribute("searchOffset",-1);
             }
 
             String order = (String) request.getParameter("order");
@@ -173,16 +186,31 @@ public class SearchServlet extends HttpServlet
             query+=addSearchTerm(request,"publisher",useSubMatch);
             query+=addSearchTerm(request,"genre",useSubMatch);
             query+=addSearchTerm(request,"platform",useSubMatch);
-            query+="ORDER BY "+order+" LIMIT "+limit+" OFFSET "+offset;
-
-            // Perform the query
+            String originalQuery = query;
+            //query = query.replaceFirst("DISTINCT "+table+"\\.\\*","COUNT(DISTINCT "+table+".*)");
+            query = "SELECT COUNT(*) FROM ("+query+") AS countable";
             statement = dbcon.prepareStatement(query);
+            query = originalQuery;
+            query+=" ORDER BY "+order+" LIMIT "+limit+" OFFSET "+offset;
+
             int statementOffset = 1;
             statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"publisher",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"genre",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"platform",statement,statementOffset,useSubMatch);
             ResultSet rs = statement.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+            request.setAttribute("searchCount",count);
+
+            // Perform the query
+            statement = dbcon.prepareStatement(query);
+            statementOffset = 1;
+            statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"publisher",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"genre",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"platform",statement,statementOffset,useSubMatch);
+            rs = statement.executeQuery();
 
             String results = "";
             results+="<TABLE border>";
@@ -193,6 +221,11 @@ public class SearchServlet extends HttpServlet
             links.put("publisher",true);
             links.put("genre",true);
             links.put("platform",true);
+            links.put("url",true);
+            links.put("trailer",true);
+            Hashtable<String,Boolean> images = new Hashtable<String,Boolean>();
+            images.put("logo",true);
+
             ResultSetMetaData meta = rs.getMetaData();
             results+="<tr>";
             for (int i=1;i<=meta.getColumnCount();++i) {
@@ -202,8 +235,8 @@ public class SearchServlet extends HttpServlet
             results+="</tr>";
             while (rs.next())
             {
-                results+=tableRow(rs,links,table);
-                results+=cartButton(Integer.toString(rs.getInt(1)));
+                results+=tableRow(rs,table,links,images);
+                results+=cartButton(Integer.toString(rs.getInt(1)),"1");
             }
             results+="</TABLE>";
 
@@ -232,7 +265,7 @@ public class SearchServlet extends HttpServlet
                 out.println ("SQL Exception:  " + ex.getMessage ());
                 ex = ex.getNextException ();
             }  // end while
-            out.println(" in sql expression "+query);
+            out.println(" in sql expression "+query+"<br />\n"+returnLink);
             out.println("</P></BODY></HTML>");
             out.close();
         }  // end catch SQLException
@@ -245,7 +278,7 @@ public class SearchServlet extends HttpServlet
                     "gamedb: Error" +
                     "</TITLE></HEAD>\n<BODY>" +
                     "<P>Error in doGet: " +
-                    ex.getMessage() + "</P></BODY></HTML>");
+                    ex.getMessage() +"<br />\n"+returnLink+"</P></BODY></HTML>");
             out.close();
             return;
         }
