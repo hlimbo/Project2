@@ -19,20 +19,12 @@
 			<input name="last_name" type="text" required>
 		</div>
 		<div>
-			<label>Address:</label>
-			<input name="address" type="text" required>
-		</div>
-		<div>
-			<label>City:</label>
-			<input name="city" type="text" required>
-		</div>
-		<div>
-			<label>Zip Code:</label>
-			<input name="zip" type="text" required>
-		</div>
-		<div>
 			<label>Credit Card Number:</label>
 			<input name="cc_id" type="text" required>	
+		</div>
+		<div>
+			<label>Expiration Date:</label>
+			<input name="expiration" type="text" required>
 		</div>
 		<input type="submit" value="Confirm Purchase">
 	</form>
