@@ -13,17 +13,17 @@
             }
             String params = "?"+request.getQueryString();
             String paramsEnd = "";
-            int offsetStart =  params.indexOf("offset=")-1;
-            if  (offsetStart <= -1) {
-                params=params+"&";
-            } else {
+            int offsetStart =  params.indexOf("offset=");
+            if  (offsetStart > -1) {
                 int offsetEnd = params.substring(offsetStart).indexOf("&");
                 if (offsetEnd == -1) {
-                    params=params.substring(0,offsetStart)+"&";
+                    params=params.substring(0,offsetStart);
                 } else {
                     params=params.substring(0,offsetStart);
                     paramsEnd=params.substring(offsetStart+offsetEnd);
                 }
+            } else {
+                params=params+"&";
             }
             for (int i=0;i<pages;++i) {
     %>
