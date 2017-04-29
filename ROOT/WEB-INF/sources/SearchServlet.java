@@ -140,14 +140,25 @@ public class SearchServlet extends HttpServlet
             }
             String limit = (String) request.getParameter("limit");
             if (limit==null) {
-                limit="20";
+                limit="100";
             } else {
                 limit = limit.replaceAll("[\\D]","");
             }
+            if (limit.trim().compareTo("")==0) {
+                limit="100";
+            }
             try {
-                request.setAttribute("searchLimit",Integer.parseInt(limit));
+                Integer lim = Integer.parseInt(limit);
+                if (lim > 100) {
+                    lim=100;
+                } else if (lim < 0) {
+                    lim=1;
+                }
+                limit = lim.toString();
+                request.setAttribute("searchLimit",lim);
             } catch (NumberFormatException ex) {
-                request.setAttribute("searchLimit",-1);
+                limit = "100";
+                request.setAttribute("searchLimit",100);
             }
 
             String offset = (String) request.getParameter("offset");
