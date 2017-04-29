@@ -58,7 +58,7 @@ public class SearchServlet extends HttpServlet
     }
 
 	private static String tableRow (ResultSet result,String table, Hashtable<String,Boolean> link,
-            Hashtable<String,Boolean> images) throws SQLException {
+            Hashtable<String,Boolean> images, Hashtable<String,Boolean> externalLinks) throws SQLException {
 		ResultSetMetaData meta = result.getMetaData();
 	    String resString = "";
 		resString+="<tr>";
@@ -110,6 +110,8 @@ public class SearchServlet extends HttpServlet
                 }
                 resString+=value;
                 resString+="</a></td>";
+            } else if  (externalLinks.containsKey(colName) && externalLinks.get(colName)) {
+			    resString+="<td><a href=\"http://"+value+"\">"+value+"</a></td>";
             } else if (images.containsKey(colName) && images.get(colName)){
                 resString+="<td><img src=\"http://"+value+"\" /></td>";
             } else {
@@ -245,8 +247,9 @@ public class SearchServlet extends HttpServlet
             links.put("publisher",true);
             links.put("genre",true);
             links.put("platform",true);
-            links.put("url",true);
-            links.put("trailer",true);
+            Hashtable<String,Boolean> externalLinks = new Hashtable<String,Boolean>();
+            externalLinks.put("url",true);
+            externalLinks.put("trailer",true);
             Hashtable<String,Boolean> images = new Hashtable<String,Boolean>();
             images.put("logo",true);
 
@@ -259,7 +262,7 @@ public class SearchServlet extends HttpServlet
             results+="</tr>";
             while (rs.next())
             {
-                results+=tableRow(rs,table,links,images);
+                results+=tableRow(rs,table,links,images,externalLinks);
                 results+=cartButton(Integer.toString(rs.getInt(1)),"1");
             }
             results+="</TABLE>";

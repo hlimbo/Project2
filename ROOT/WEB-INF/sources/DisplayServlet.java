@@ -24,7 +24,7 @@ public class DisplayServlet extends HttpServlet
 
     private String getValue (String table, String column, String fieldValue, 
             Hashtable<String,Boolean> fieldIgnores, Hashtable<String,Boolean> links,
-            Hashtable<String,Boolean> images) throws UnsupportedEncodingException {
+            Hashtable<String,Boolean> images, Hashtable<String,Boolean> externalLinks) throws UnsupportedEncodingException {
         if (fieldIgnores.containsKey(column) && fieldIgnores.get(column)
                 && (table.compareToIgnoreCase("games") != 0 || column.compareToIgnoreCase("id") != 0)) {
             return null;
@@ -35,6 +35,8 @@ public class DisplayServlet extends HttpServlet
             return("<td>"+column+": <a href=\""+fieldUrl+"\">"+fieldValue+"</a></td>");
         } else if (images.containsKey(column) && images.get(column)){
             return ("<td><img src=\"http://"+fieldValue+"\" /></td>");
+        } else if (externalLinks.containsKey(column) && externalLinks.get(column)) {
+            return("<td>"+column+": <a href=\"http://"+fieldValue+"\">"+fieldValue+"</a></td>");
         }else {
             return ("<td>"+column+": "+fieldValue+"</td>");
         }
@@ -131,7 +133,8 @@ public class DisplayServlet extends HttpServlet
             links.put("genre",true);
             links.put("platform",true);
             links.put("url",true);
-            links.put("trailer",true);
+            Hashtable<String,Boolean> externalLinks = new Hashtable<String,Boolean>();
+            externalLinks.put("trailer",true);
             Hashtable<String,Boolean> images = new Hashtable<String,Boolean>();
             images.put("logo",true);
 
@@ -149,7 +152,7 @@ public class DisplayServlet extends HttpServlet
                     if (fieldValue == null) {
                         continue;
                     }
-                    fieldValue = getValue(table,columnName,fieldValue,fieldIgnores,links,images);
+                    fieldValue = getValue(table,columnName,fieldValue,fieldIgnores,links,images,externalLinks);
                     if (fieldValue == null) {
                         continue;
                     }
@@ -209,9 +212,9 @@ public class DisplayServlet extends HttpServlet
                                             continue;
                                         }
                                         if (parentColumn.compareToIgnoreCase("url") == 0) {
-                                            fieldValue = getValue(parentTable,"trailer",fieldValue,fieldIgnores,links,images);
+                                            fieldValue = getValue(parentTable,"trailer",fieldValue,fieldIgnores,links,images,externalLinks);
                                         } else {
-                                            fieldValue = getValue(parentTable,parentColumn,fieldValue,fieldIgnores,links,images);
+                                            fieldValue = getValue(parentTable,parentColumn,fieldValue,fieldIgnores,links,images,externalLinks);
                                         }
                                         if (fieldValue == null) {
                                             continue;
