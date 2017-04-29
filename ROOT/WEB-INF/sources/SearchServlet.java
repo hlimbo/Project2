@@ -48,9 +48,10 @@ public class SearchServlet extends HttpServlet
             return offset;
     }
 
-    private String cartButton (String value) {
-        String button = "<tr><td><form action=\"TODO\" method=\"GET\">";
-        button+="<input type=\"HIDDEN\" id=\""+value+"\" \\>";
+    private String cartButton (String id, String quantity) {
+        String button = "<tr><td><form action=\"/ShoppingCart/AddToCartDisplay.jsp\" method=\"GET\">";
+        button+="<input type=\"HIDDEN\" name=id value=\""+id+"\" \\>";
+        button+="<input type=\"HIDDEN\" name=\"quantity\" value=\""+quantity+"\" \\>";
         button+="<input type=\"SUBMIT\" value=\"Checkout\" \\>";
         button+="</form></td></tr>";
         return button;
@@ -203,7 +204,7 @@ public class SearchServlet extends HttpServlet
             while (rs.next())
             {
                 results+=tableRow(rs,links,table);
-                results+=cartButton(Integer.toString(rs.getInt(1)));
+                results+=cartButton(Integer.toString(rs.getInt(1)),"1");
             }
             results+="</TABLE>";
 
