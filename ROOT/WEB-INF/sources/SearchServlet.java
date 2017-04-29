@@ -69,24 +69,37 @@ public class SearchServlet extends HttpServlet
             String value="";
 			switch(typeName.toUpperCase()) {
 			case "YEAR":
-				value+=result.getString(i).substring(0,4);
-                handled=true;
+                if (result.getString(i) != null) {
+				    value+=result.getString(i).substring(0,4);
+                    handled=true;
+                }
 				break;
 			}
 			if (!handled) {
 				switch(type) {
 				case Types.INTEGER:
-					value+=result.getInt(i);
+                    if (result.getString(i) != null) {
+					    value+=result.getInt(i);
+                    }
 					break;
 				default:
-					value+=result.getString(i);
+                    if (result.getString(i) != null) {
+					    value+=result.getString(i);
+                    }
 					break;
 				}
 			}
-            if (value==null) {
+            //handle nulls and empty values here
+			String colName = meta.getColumnName(i);
+            if (value==null || value.trim().compareTo("") == 0) {
+                if (images.containsKey(colName) && images.get(colName)){
+                    resString+="<td><img src=\""
+                        +"http://upload.wikimedia.org/wikipedia/"
+                        +"commons/thumb/5/51/"
+                        +"Star_full.svg/11px-Star_full.svg.png\" /></td>";
+                }
                 continue;
             }
-			String colName = meta.getColumnName(i);
             if  (link.containsKey(colName) && link.get(colName)) {
                 try {
 			        resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+
