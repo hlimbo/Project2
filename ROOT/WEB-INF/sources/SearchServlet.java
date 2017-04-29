@@ -144,12 +144,22 @@ public class SearchServlet extends HttpServlet
             } else {
                 limit = limit.replaceAll("[\\D]","");
             }
+            try {
+                request.setAttribute("searchLimit",Integer.parseInt(limit));
+            } catch (NumberFormatException ex) {
+                request.setAttribute("searchLimit",-1);
+            }
 
             String offset = (String) request.getParameter("offset");
             if (offset==null) {
                 offset="0";
             } else {
                 offset = offset.replaceAll("[\\D]","");
+            }
+            try {
+                request.setAttribute("searchOffset",Integer.parseInt(offset));
+            } catch (NumberFormatException ex) {
+                request.setAttribute("searchOffset",-1);
             }
 
             String order = (String) request.getParameter("order");
@@ -176,16 +186,31 @@ public class SearchServlet extends HttpServlet
             query+=addSearchTerm(request,"publisher",useSubMatch);
             query+=addSearchTerm(request,"genre",useSubMatch);
             query+=addSearchTerm(request,"platform",useSubMatch);
-            query+="ORDER BY "+order+" LIMIT "+limit+" OFFSET "+offset;
-
-            // Perform the query
+            String originalQuery = query;
+            //query = query.replaceFirst("DISTINCT "+table+"\\.\\*","COUNT(DISTINCT "+table+".*)");
+            query = "SELECT COUNT(*) FROM ("+query+") AS countable";
             statement = dbcon.prepareStatement(query);
+            query = originalQuery;
+            query+=" ORDER BY "+order+" LIMIT "+limit+" OFFSET "+offset;
+
             int statementOffset = 1;
             statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"publisher",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"genre",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"platform",statement,statementOffset,useSubMatch);
             ResultSet rs = statement.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+            request.setAttribute("searchCount",count);
+
+            // Perform the query
+            statement = dbcon.prepareStatement(query);
+            statementOffset = 1;
+            statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"publisher",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"genre",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"platform",statement,statementOffset,useSubMatch);
+            rs = statement.executeQuery();
 
             String results = "";
             results+="<TABLE border>";
