@@ -22,6 +22,12 @@ limitations under the License.
         <meta charset="UTF-8" />
         <title>Welcome</title>
         <link href="/tomcat.css" rel="stylesheet" type="text/css" />
+        <style>
+        .letterList {
+            display: inline;
+            list-style-type: none;
+        }
+        </style>
     </head>
 
     <body>
@@ -34,8 +40,8 @@ limitations under the License.
                 tables.add("platforms");
                 tables.add("games");
                 for (String table : tables) { %>
-                <li><a href="/search/query?table="<%= table %>><%= table %></a>
-                    <ul>
+                <li class="browseList" ><a href="/search/query?table="<%= table %>><%= table %></a>
+                    <ul class="letterList" >
                         <% for (char firstLetter = 'a';firstLetter<='z';++firstLetter) { 
                             String column;
                             if (table.compareToIgnoreCase("games")!=0) { 
@@ -43,7 +49,7 @@ limitations under the License.
                             } else { 
                                 column = "name";
                             } %>
-                            <%= "<li><a href=\"search/query?table="+table+"&columnName="+column
+                            <%= "<li class=\"letterList\"><a href=\"search/query?table="+table+"&columnName="+column
                                 +"&"+column+"="+firstLetter+"%25&match=true\" >"+(""+firstLetter).toUpperCase()
                                 +"</a></li>" %>
                         <% } %>
