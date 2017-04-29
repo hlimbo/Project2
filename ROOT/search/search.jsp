@@ -25,12 +25,28 @@
             } else {
                 params=params+"&";
             }
-            for (int i=0;i<pages;++i) {
+            boolean limitPages = false;
+            if (pages > 20) {
+                limitPages = true;
+                pages = 20;
+                if (offset > 0) { %>
+                <%= "<a href=\"/search/query"
+                    +params+"offset="+Integer.toString(Math.max(0,offset-limit))
+                    +"\">Previous</a>" %>
+                <% }
+            }
+            int pageStart=Math.max(0,offset/limit-10);
+            for (int i=pageStart;i<pages+pageStart;++i) {
     %>
             <%= "<a href=\"/search/query"
                 +params+"offset="+Integer.toString(i*limit)+paramsEnd
                 +"\">"+Integer.toString(i+1)+"</a>" %>
     <%      }
+            if (limitPages && offset+limit<count) { %>
+            <%= "<a href=\"/search/query"
+                +params+"offset="+Integer.toString(offset+limit)
+                +"\">Next</a>" %>
+            <% }
         } else { %>
     <% } %>
 <%-- default is to ask for the search--%>
