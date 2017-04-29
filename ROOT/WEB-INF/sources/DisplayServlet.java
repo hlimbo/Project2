@@ -135,11 +135,13 @@ public class DisplayServlet extends HttpServlet
             Hashtable<String,Boolean> images = new Hashtable<String,Boolean>();
             images.put("logo",true);
 
-            results+="<tr><td>"+columnValue+"</td></tr><tr>";
+            //results+="<tr><td>"+columnValue+"</td></tr><tr>";
+            //results+="<tr>";
             query="SELECT DISTINCT * FROM "+table+" WHERE id="+id;
             statement=dbcon.prepareStatement(query);
             rs = statement.executeQuery();
             while (rs.next()) {
+                results+="<tr><td>";
                 ResultSetMetaData meta = rs.getMetaData();
                 for (int i=1;i<=meta.getColumnCount();++i) {
                     String columnName = meta.getColumnName(i);
@@ -151,9 +153,21 @@ public class DisplayServlet extends HttpServlet
                     if (fieldValue == null) {
                         continue;
                     }
-                    results+=fieldValue;
+                    //strip <td> tags
+                    /*if (i==2) {
+                        results+="<TABLE border><tr>";
+                    }*/
+                    if (i==1) {
+                        fieldValue=fieldValue.substring(4,fieldValue.length()-5);
+                        results+=fieldValue+"</td><td><TABLE border>";
+                    } else {
+                        results+=fieldValue;
+                    }
                 }
-                results+="</tr>\n";
+                /*if (meta.getColumnCount() > 1) {
+                    results+="</tr></TABLE>";
+                }*/
+                results+="</td></tr></TABLE>\n";
             }
             for (String tbl : tables) {
                 //by convention of SQL schema, relation tables contains name
@@ -167,8 +181,9 @@ public class DisplayServlet extends HttpServlet
                     rs = statement.executeQuery();
                     results += "<td><TABLE border>";
                     ArrayList<String> fields = new ArrayList<String>();
+                    ArrayList<String> checkouts = new ArrayList<String>();
 
-                    int k = 0;
+                    int row = 0;
                     while (rs.next()) {
                         ResultSetMetaData meta = rs.getMetaData();
                         for (int i=1;i<=meta.getColumnCount();++i) {
@@ -212,24 +227,33 @@ public class DisplayServlet extends HttpServlet
                                         //} else {
                                         //    fieldValue="<td>"+parentColumn+": "+fieldValue+"</td>";
                                         //}
-                                        if (fields.size() > k) {
-                                            fields.set(k,fields.get(k)+fieldValue);
+                                        if (fields.size() > row) {
+                                            fields.set(row,fields.get(row)+fieldValue);
                                         } else {
-                                            fields.add(k,fieldValue);
+                                            fields.add(row,fieldValue);
+                                        }
+                                        if (parentTable.trim().compareToIgnoreCase("games")==0) {
+                                            checkouts.add(cartButton(gameID,gameName,gamePrice,"1"));
                                         }
                                     }
-                                    if (parentTable.trim().compareToIgnoreCase("games")==0) {
-                                        fields.set(k,fields.get(k)+cartButton(gameID,gameName,gamePrice,"1"));
-                                    }
+                                    //if (parentTable.trim().compareToIgnoreCase("games")==0) {
+                                        //fields.set(row,fields.get(row)+cartButton(gameID,gameName,gamePrice,"1"));
+                                        //fields.set(row,fields.get(row));
+                                        //checkouts.add(cartButton(gameID,gameName,gamePrice,"1"));
+                                    //}
                                 }
                                 parentResult.close();
                                 parentStatement.close();
                             }
                         }
-                        ++k;
+                        ++row;
                     }
-                    for (String fld : fields) {
-                        results+="<tr>"+fld+"</tr>";
+                    for (int i=0;i<fields.size();++i) {
+                        results+="<tr>"+fields.get(i);
+                        if (table.compareToIgnoreCase("games") != 0) {
+                            results+=checkouts.get(i);
+                        }
+                        results+="</tr>";
                     }
                     results += "</td></TABLE>";
                     results+="</tr>\n";
