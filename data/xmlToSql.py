@@ -5,7 +5,7 @@ import pymysql
 FILE_NAME = "game_trailers.xml"
 XML_SUBDATA_TAG = "Game" 
 #XML_TAG = "Youtube" 
-XML_TAG = "Youtube" 
+XML_TAG = "genre" 
 XML_ID =  "GameTitle"
 
 
@@ -53,21 +53,21 @@ for piece in root.iter(XML_SUBDATA_TAG):
         for xmlId in piece.iter(XML_ID):
             for xmlTag in piece.iter(XML_TAG):
                 xmlTag.text=xmlTag.text.strip()
-                if xmlTag.text.startswith("http://"):
-                    xmlTag.text=xmlTag.text.replace("http://","",1)
+                #if xmlTag.text.startswith("http://"):
+                    #xmlTag.text=xmlTag.text.replace("http://","",1)
                 if xmlId.text in tags and xmlTag.text not in tags[xmlId.text]:
                     tags[xmlId.text].append(xmlTag.text)
 
 print (tags)
 
 #Entity table update
-with open(FILE_NAME+".sql","w") as sql:
-    sql.write("ALTER TABLE "+SQL_UNIQUE_TABLE+"\n   ADD "+NEW_COLUMN_TYPE+";\n")
-    for key, tag in tags.items():
-        for url in tag:
-            sql.write("UPDATE "+SQL_UNIQUE_TABLE+"\n   SET "+NEW_COLUMN+" = '"
-                    +url+"'\n   WHERE "+SQL_UNIQUE_COLUMN+" = '"
-                    +key.replace("'","\\'")+"';\n")
+#with open(FILE_NAME+".sql","w") as sql:
+#    sql.write("ALTER TABLE "+SQL_UNIQUE_TABLE+"\n   ADD "+NEW_COLUMN_TYPE+";\n")
+#    for key, tag in tags.items():
+#        for url in tag:
+#            sql.write("UPDATE "+SQL_UNIQUE_TABLE+"\n   SET "+NEW_COLUMN+" = '"
+#                    +url+"'\n   WHERE "+SQL_UNIQUE_COLUMN+" = '"
+#                    +key.replace("'","\\'")+"';\n")
 
 #Entity table insert
 #with open(FILE_NAME+".sql","w") as sql:
@@ -82,9 +82,9 @@ with open(FILE_NAME+".sql","w") as sql:
 
 
 #Relationship tables
-#with open(FILE_NAME+".sql","w") as sql:
-#    for key, value in tags.items():
-#        for v in value:
-#            if (key,v) not in relations:
-#                sql.write("INSERT INTO "+SQL_RELATION_TABLE+"\n   (game_id, genre_id)"
-#                    +" VALUES\n   ("+str(ids[key])+", "+str(other_ids[v])+");\n")
+with open(FILE_NAME+".sql","w") as sql:
+    for key, value in tags.items():
+        for v in value:
+            if (key,v) not in relations:
+                sql.write("INSERT INTO "+SQL_RELATION_TABLE+"\n   (game_id, genre_id)"
+                    +" VALUES\n   ("+str(ids[key])+", "+str(other_ids[v])+");\n")
