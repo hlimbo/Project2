@@ -48,6 +48,7 @@ public class DisplayServlet extends HttpServlet
         String loginUser = "user";
         String loginPasswd = "password";
         String loginUrl = "jdbc:mysql://localhost:3306/gamedb";
+        String returnLink = "<a href=\"/\"> Return to home </a>";
 
         response.setContentType("text/html");    // Response mime type
 
@@ -264,7 +265,7 @@ public class DisplayServlet extends HttpServlet
                 out.println ("SQL Exception:  " + ex.getMessage ());
                 ex = ex.getNextException ();
             }  // end while
-                    out.println("</P></BODY></HTML>");
+            out.println("<br />\n"+returnLink+"</P></BODY></HTML>");
             out.close();
         }  // end catch SQLException
         catch (UnsupportedEncodingException ex) {
@@ -274,7 +275,7 @@ public class DisplayServlet extends HttpServlet
                     "gamedb: Error" +
                     "</TITLE></HEAD>\n<BODY>" +
                     "<P>UnsupportedEncodingException in doGet: " +
-                    ex.getMessage() + "</P></BODY></HTML>");
+                    ex.getMessage() + "<br />\n"+returnLink+"</P></BODY></HTML>");
             out.close();
             return;
         }
@@ -287,7 +288,7 @@ public class DisplayServlet extends HttpServlet
                     "</TITLE></HEAD>\n<BODY>" +
                     "<P>Error in doGet: ");
             ex.printStackTrace(out);
-            out.println(ex.getMessage() + "</P></BODY></HTML>");
+            out.println(ex.getMessage() + "<br />\n"+returnLink+"</P></BODY></HTML>");
             out.close();
             return;
         }

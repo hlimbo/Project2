@@ -121,6 +121,7 @@ public class SearchServlet extends HttpServlet
         response.setContentType("text/html");    // Response mime type
 
         String query = "";
+        String returnLink = "<a href=\"/\"> Return to home </a>";
         try
         {
             //Class.forName("org.gjt.mm.mysql.Driver");
@@ -239,7 +240,7 @@ public class SearchServlet extends HttpServlet
                 out.println ("SQL Exception:  " + ex.getMessage ());
                 ex = ex.getNextException ();
             }  // end while
-            out.println(" in sql expression "+query);
+            out.println(" in sql expression "+query+"<br />\n"+returnLink);
             out.println("</P></BODY></HTML>");
             out.close();
         }  // end catch SQLException
@@ -252,7 +253,7 @@ public class SearchServlet extends HttpServlet
                     "gamedb: Error" +
                     "</TITLE></HEAD>\n<BODY>" +
                     "<P>Error in doGet: " +
-                    ex.getMessage() + "</P></BODY></HTML>");
+                    ex.getMessage() +"<br />\n"+returnLink+"</P></BODY></HTML>");
             out.close();
             return;
         }
