@@ -217,7 +217,8 @@ public class SearchServlet extends HttpServlet
             query = "SELECT COUNT(*) FROM ("+query+") AS countable";
             statement = dbcon.prepareStatement(query);
             query = originalQuery;
-            query+=" ORDER BY "+order+" LIMIT "+limit+" OFFSET "+offset;
+            query+=" ORDER BY ISNULL( "+table+"."+order+"), "+table+"."+order+", "
+                +table+".id LIMIT "+limit+" OFFSET "+offset;
 
             int statementOffset = 1;
             statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
@@ -259,17 +260,19 @@ public class SearchServlet extends HttpServlet
             String requestUrlEnd = "";
             int orderStart = requestUrl.indexOf("order=");
             if (orderStart > -1) {
-                int orderEnd = requestUrl.substring(orderStart).indexOf("?");
+                int orderEnd = requestUrl.substring(orderStart).indexOf("&");
                 if (orderEnd == -1) {
                     requestUrl=requestUrl.substring(0,orderStart);
                 } else {
                     requestUrl=requestUrl.substring(0,orderStart);
                     requestUrlEnd=requestUrl.substring(orderStart+orderEnd);
                 }
+            } else {
+                requestUrl+="&";
             }
             for (int i=1;i<=meta.getColumnCount();++i) {
                 String column = meta.getColumnName(i);
-                results+="<td><a href=\"/search/query"+requestUrl+"&order="+column
+                results+="<td><a href=\"/search/query"+requestUrl+"order="+column
                     +requestUrlEnd+"\">"+column+"</a></td>";
             }
             results+="</tr>";

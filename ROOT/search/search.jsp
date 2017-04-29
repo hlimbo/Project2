@@ -15,11 +15,11 @@
             String paramsEnd = "";
             int offsetStart =  params.indexOf("offset=")-1;
             if  (offsetStart <= -1) {
-                params=params;
+                params=params+"&";
             } else {
                 int offsetEnd = params.substring(offsetStart).indexOf("&");
                 if (offsetEnd == -1) {
-                    params=params.substring(0,offsetStart);
+                    params=params.substring(0,offsetStart)+"&";
                 } else {
                     params=params.substring(0,offsetStart);
                     paramsEnd=params.substring(offsetStart+offsetEnd);
@@ -28,7 +28,7 @@
             for (int i=0;i<pages;++i) {
     %>
             <%= "<a href=\"/search/query"
-                +params+"&offset="+Integer.toString(i*limit)+paramsEnd
+                +params+"offset="+Integer.toString(i*limit)+paramsEnd
                 +"\">"+Integer.toString(i+1)+"</a>" %>
     <%      }
         } else { %>
