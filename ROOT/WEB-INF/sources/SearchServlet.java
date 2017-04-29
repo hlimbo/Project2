@@ -57,7 +57,8 @@ public class SearchServlet extends HttpServlet
         return button;
     }
 
-	private static String tableRow (ResultSet result,Hashtable<String,Boolean> link,String table) throws SQLException {
+	private static String tableRow (ResultSet result,String table, Hashtable<String,Boolean> link,
+            Hashtable<String,Boolean> images) throws SQLException {
 		ResultSetMetaData meta = result.getMetaData();
 	    String resString = "";
 		resString+="<tr>";
@@ -82,10 +83,11 @@ public class SearchServlet extends HttpServlet
 					break;
 				}
 			}
+            if (value==null) {
+                continue;
+            }
 			String colName = meta.getColumnName(i);
-            boolean makeLink = false;
             if  (link.containsKey(colName) && link.get(colName)) {
-                makeLink=true;
                 try {
 			        resString+="<td><a href=\"/display/query?table="+table+"&columnName="+colName+
                         "&"+colName+"="+URLEncoder.encode(value,"UTF-8")+"\">";
@@ -95,13 +97,12 @@ public class SearchServlet extends HttpServlet
                 }
                 resString+=value;
                 resString+="</a></td>";
+            } else if (images.containsKey(colName) && images.get(colName)){
+                resString+="<td><img src=\"http://"+value+"\" /></td>";
             } else {
 			    resString+="<td>";
                 resString+=value;
 			    resString+="</td>";
-            }
-            if (makeLink) {
-            } else {
             }
 		}
 		resString+="</tr>";
@@ -194,6 +195,11 @@ public class SearchServlet extends HttpServlet
             links.put("publisher",true);
             links.put("genre",true);
             links.put("platform",true);
+            links.put("url",true);
+            links.put("trailer",true);
+            Hashtable<String,Boolean> images = new Hashtable<String,Boolean>();
+            images.put("logo",true);
+
             ResultSetMetaData meta = rs.getMetaData();
             results+="<tr>";
             for (int i=1;i<=meta.getColumnCount();++i) {
@@ -203,7 +209,7 @@ public class SearchServlet extends HttpServlet
             results+="</tr>";
             while (rs.next())
             {
-                results+=tableRow(rs,links,table);
+                results+=tableRow(rs,table,links,images);
                 results+=cartButton(Integer.toString(rs.getInt(1)),"1");
             }
             results+="</TABLE>";
