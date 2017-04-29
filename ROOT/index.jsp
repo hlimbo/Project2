@@ -32,7 +32,9 @@ limitations under the License.
     <body>
         <% if (session.getAttribute("first_name") != null) { %>
             Browse by 
-            <jsp:include page="browse/browse.jsp" />
+            <jsp:include page="/browse/browse.jsp" />
+            Search
+            <jsp:include page="/search/search.jsp" />
         <% } else { %>
             <a href="/LoginPage">Login</a> 
         <% } %>
