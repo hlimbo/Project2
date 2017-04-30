@@ -154,26 +154,27 @@ public class SearchServlet extends HttpServlet
                 table = table.replaceAll("[^\\w]","_");
             }
             String limit = (String) request.getParameter("limit");
+            Integer limitMax = 50;
             if (limit==null) {
-                limit="100";
+                limit=limitMax.toString();
             } else {
                 limit = limit.replaceAll("[\\D]","");
             }
             if (limit.trim().compareTo("")==0) {
-                limit="100";
+                limit=limitMax.toString();
             }
             try {
                 Integer lim = Integer.parseInt(limit);
-                if (lim > 100) {
-                    lim=100;
+                if (lim > limitMax) {
+                    lim=limitMax;
                 } else if (lim < 0) {
                     lim=1;
                 }
                 limit = lim.toString();
                 request.setAttribute("searchLimit",lim);
             } catch (NumberFormatException ex) {
-                limit = "100";
-                request.setAttribute("searchLimit",100);
+                limit = limitMax.toString();
+                request.setAttribute("searchLimit",limitMax);
             }
 
             String offset = (String) request.getParameter("offset");

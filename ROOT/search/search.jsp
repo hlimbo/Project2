@@ -56,7 +56,7 @@
     genre: <input type="TEXT" name="genre" /> <BR />
     platform: <input type="TEXT" name="platform" /> <BR />
     publisher: <input type="TEXT" name="publisher" /> <BR />
-    results per page (max 100): <input type="text" name="limit" /> <BR />
+    results per page (max 50): <input type="text" name="limit" /> <BR />
     exact search?: <input type="checkbox" name="match" value="true" /> <BR />
     <input type="HIDDEN" name="forward" <%= "value="+request.getRequestURI() %> />
     <center>
