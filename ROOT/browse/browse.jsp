@@ -1,5 +1,6 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" 
     import="java.util.*" %>
+Browse
 <ul>
     <%  ArrayList<String> tables = new ArrayList<String>();
         Hashtable<String,String> ignores = new Hashtable<String,String> ();

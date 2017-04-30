@@ -15,7 +15,6 @@
 
     <body>
         <% if (session.getAttribute("first_name") != null) { %>
-            Browse
             <jsp:include page="/browse/browse.jsp" />
         <% } else { %>
             <a href="/LoginPage">Login</a> 

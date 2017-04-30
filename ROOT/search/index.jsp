@@ -23,7 +23,6 @@ limitations under the License.
         <link href="/tomcat.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
-        Search
         <jsp:include page="search.jsp" />
     </body>
 </html>

@@ -60,6 +60,7 @@
     <% } %>
 <%-- default is to ask for the search--%>
 <% } else { %>
+Search
 <form action="/search/query" method="GET">
     title: <input type="TEXT" name="name" /> <BR />
     year: <input type="TEXT" name="year" /> <BR />
