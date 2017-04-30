@@ -61,7 +61,7 @@ public class SearchServlet extends HttpServlet
             Hashtable<String,Boolean> images, Hashtable<String,Boolean> externalLinks, Hashtable<String,Boolean> ignores) throws SQLException {
 		ResultSetMetaData meta = result.getMetaData();
 	    String resString = "";
-		resString+="<tr>";
+		//resString+="<tr>";
 		for (int i=1;i<=meta.getColumnCount();++i) {
 			int type = meta.getColumnType(i);
 			String typeName = meta.getColumnTypeName(i);
@@ -123,7 +123,7 @@ public class SearchServlet extends HttpServlet
 			    resString+="</td>";
             }
 		}
-		resString+="</tr>";
+		//resString+="</tr>";
         return resString;
 	}
 
@@ -292,21 +292,55 @@ public class SearchServlet extends HttpServlet
                     +requestUrlEnd+"\">"+column+"</a></td>";
             }
             results+="</tr>";
-            ArrayList<String> records= new ArrayList<String>();
-            ArrayList<String> gameIDs = new ArrayList<String>();
-            int i = 0;
-            while (rs.next())
-            {
-                records.add(tableRow(rs,table,links,images,externalLinks,ignores));
-                //gameIDs.add(null);
-                //results+=tableRow(rs,table,links,images,externalLinks);
-                //results+=cartButton(Integer.toString(rs.getInt(1)),"1");
-            }
-            for (String record : records) {
-                results+=record;
-                /*if (gameIDs.get(i) != null) {
+            if (table.trim().compareToIgnoreCase("games")==0) {
+                ArrayList<String> records= new ArrayList<String>();
+                ArrayList<Integer> gameIDs = new ArrayList<Integer>();
+                //get game fields
+                while (rs.next())
+                {
+                    records.add("<tr>"+tableRow(rs,table,links,images,externalLinks,ignores)+"</tr>");
+                    gameIDs.add(rs.getInt(1));
+                }
+                //get publishers
+                for (int i=0;i<gameIDs.size();++i) {
+                    query="SELECT DISTINCT publisher FROM publishers JOIN publishers_of_games ON id=publisher_id WHERE game_id=?";
+                    PreparedStatement pubStatement =dbcon.prepareStatement(query);
+                    pubStatement.setInt(1,gameIDs.get(i));
+                    rs = pubStatement.executeQuery();
+                    records.set(i,records.get(i)+"<tr><td>publishers: </td><td>");
+                    while (rs.next()) {
+                        records.set(i,"<ul>"+records.get(i)+tableRow(rs,table,links,
+                                    images,externalLinks,
+                                    ignores).replaceAll("<td>","<li>").replaceAll("</td>","</li>")+"</ul>");
+                    }
+                    records.set(i,records.get(i)+"</td></tr>");
+                }
+                //get genres
+                for (int i=0;i<gameIDs.size();++i) {
+                    query="SELECT genre FROM genres JOIN genres_of_games ON id=genre_id WHERE game_id=?";
+                    PreparedStatement genStatement =dbcon.prepareStatement(query);
+                    genStatement.setInt(1,gameIDs.get(i));
+                    rs = genStatement.executeQuery();
+                    records.set(i,records.get(i)+"<tr><td>genres: </td><td><ul>");
+                    while (rs.next()) {
+                        records.set(i,records.get(i)+tableRow(rs,table,links,
+                                    images,externalLinks,
+                                    ignores).replaceAll("<td>","<li>").replaceAll("</td>","</li>"));
+                    }
+                    records.set(i,records.get(i)+"</ul></td></tr>");
+                }
+                int i=0;
+                for (String record : records) {
+                    results+=record;
                     results+=cartButton(Integer.toString(gameIDs.get(i)),"1");
-                }*/
+                    ++i;
+                }
+            } else {
+                while (rs.next())
+                {
+                    results+="<tr>"+tableRow(rs,table,links,images,externalLinks,ignores)+"</tr>";
+                    results+=cartButton(Integer.toString(rs.getInt(1)),"1");
+                }
             }
             results+="</TABLE>";
 
