@@ -69,7 +69,13 @@
 						<td><%= item %></td>
 						<td> <%= set.getString("name") %> </td>
 						<td> <%= set.getInt("price") %> </td>
-						<td> 1 </td>
+						<td> <input type="text" name="quantity" value="1"> </td>
+						<td> 
+							<form action="/ShoppingCart/delete-item" method="GET">
+								<input type="hidden" name="itemID" value=<%= item %> >
+								<button name="deleteItem"> Delete </button>
+							</form>
+						</td>
 					</tr>
 					<% } %>
 				<% } } else { %>
@@ -87,6 +93,7 @@
 			<button name="checkout">Continue To Checkout</button>
 		</form>
 		
+		<!-- clearing the cart contents -->
 		<form action="/ShoppingCart/clear-cart" method="GET">
 			<button name="clearCart"> Clear Cart</button>
 		</form>
