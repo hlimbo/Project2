@@ -5,12 +5,12 @@
         Hashtable<String,String> ignores = new Hashtable<String,String> ();
         ignores.put("game","8");
         ignores.put("publishers","068");
-        //tables.add("genres");
-        tables.add("publishers");
-        //tables.add("platforms");
         tables.add("games");
+        tables.add("publishers");
+        //tables.add("genres");
+        //tables.add("platforms");
         for (String table : tables) { %>
-        <li class="browseList" ><a href="/search/query?table="<%= table %>><%= table %></a>
+        <%= "<li class=\"browseList\" ><a href=\"/search/query?table="+table+"\">"+table+"</a>" %>
             <ul class="letterList" >
                 <% for (char firstLetter = '0';firstLetter<='z';++firstLetter) { 
                     String column;
