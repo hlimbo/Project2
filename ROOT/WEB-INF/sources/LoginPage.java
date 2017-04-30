@@ -37,6 +37,7 @@ public class LoginPage extends HttpServlet
 			  Statement statement = dbcon.createStatement();	
 				
 			  String email = request.getParameter("email");
+			  email.trim();
 			  String password = request.getParameter("password");
               String query = "SELECT * from customers where email = '" + email + "'" + " and password = '" + password + "'";
 			  ResultSet result = statement.executeQuery(query);

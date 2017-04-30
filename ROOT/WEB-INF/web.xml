@@ -87,4 +87,14 @@
     <url-pattern>/CustomerInformation/customer-info-confirmation</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+	<servlet-name>ClearCartServlet</servlet-name>
+	<servlet-class>ClearCart</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+	<servlet-name>ClearCartServlet</servlet-name>
+    <url-pattern>/ShoppingCart/clear-cart</url-pattern>
+   </servlet-mapping>
+
 </web-app>

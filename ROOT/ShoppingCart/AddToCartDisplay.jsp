@@ -12,6 +12,13 @@
 	<HEAD>
 		<TITLE>Add To Cart</TITLE>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<style>
+			.error
+			{
+				color: red;
+			}
+		</style>
+	
 	</HEAD>
 	
 	<BODY>	
@@ -33,6 +40,11 @@
 		<% session.setAttribute("quantity", request.getParameter("quantity")); %>
 	
 		<H1>Shopping Cart</H1>
+		
+		<% if ( session.getAttribute("errorString") != null ) { %>	
+		<p class="error"> <%= session.getAttribute("errorString") %> </p>
+		<% session.setAttribute("errorString", null); } %>
+		
 		
 		<table class="table">
 		<thead>
@@ -62,10 +74,7 @@
 					<% } %>
 				<% } } else { %>
 				<tr>
-					<td>#</td>
-					<td>Empty</td>
-					<td>0.00</td>
-					<td>0</td>	
+					<p> Cart is Empty </p>
 				</tr>
 				<% } %>
 		</tbody>
@@ -77,5 +86,10 @@
 		<form action="/CustomerInformation/index.jsp" method="GET">
 			<button name="checkout">Continue To Checkout</button>
 		</form>
+		
+		<form action="/ShoppingCart/clear-cart" method="GET">
+			<button name="clearCart"> Clear Cart</button>
+		</form>
+		
 	</BODY>
 </HTML>

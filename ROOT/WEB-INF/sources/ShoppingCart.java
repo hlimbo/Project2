@@ -30,6 +30,7 @@ public class ShoppingCart extends HttpServlet
 		//if not, create a new cart with the item added to it.
 		synchronized(session)
 		{
+<<<<<<< HEAD:ROOT/WEB-INF/sources/ShoppingCart.java
 			ArrayList<?> attrs = (ArrayList<?>)session.getAttribute("cartList");
             if (attrs != null) {
                 cartList = new ArrayList<String>();
@@ -37,6 +38,9 @@ public class ShoppingCart extends HttpServlet
                     cartList.add((String)attr);
                 }
             }
+=======
+			cartList = (ArrayList<String>)session.getAttribute("cartList");
+>>>>>>> ShoppingCartBranch:ShoppingCart/WEB-INF/sources/ShoppingCart.java
 			//if  cartList from the cart does not already exist, create one
 			if(cartList == null)
 			{
