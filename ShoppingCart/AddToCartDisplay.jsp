@@ -74,7 +74,7 @@
 		<hr>
 		
 		<!-- TODO(Harvey): Might change back to GET request in order to retrieve the items that will be bought from cart -->
-		<form action="CheckoutDisplay.jsp" method="GET">
+		<form action="/CustomerInformation/index.jsp" method="GET">
 			<button name="checkout">Continue To Checkout</button>
 		</form>
 	</BODY>
