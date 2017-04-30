@@ -52,7 +52,7 @@ public class SearchServlet extends HttpServlet
         String button = "<tr><td><form action=\"/ShoppingCart/AddToCartDisplay.jsp\" method=\"GET\">";
         button+="<input type=\"HIDDEN\" name=id value=\""+id+"\" \\>";
         button+="<input type=\"HIDDEN\" name=\"quantity\" value=\""+quantity+"\" \\>";
-        button+="<input type=\"SUBMIT\" value=\"Checkout\" \\>";
+        button+="<input type=\"SUBMIT\" value=\"Add to Shopping Cart\" \\>";
         button+="</form></td></tr>";
         return button;
     }

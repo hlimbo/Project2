@@ -156,7 +156,13 @@ public class DisplayServlet extends HttpServlet
                     String columnName = meta.getColumnName(i);
                     String fieldValue = rs.getString(i);
                     if (fieldValue == null) {
-                        continue;
+                        if (images.containsKey(columnName) && images.get(columnName)) {
+                            fieldValue="upload.wikimedia.org/wikipedia/"
+                                +"commons/thumb/5/51/"
+                                +"Star_full.svg/11px-Star_full.svg.png";
+                        } else {
+                            continue;
+                        }   
                     }
                     fieldValue = getValue(table,columnName,fieldValue,fieldIgnores,links,images,externalLinks);
                     if (fieldValue == null) {
