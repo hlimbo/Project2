@@ -25,35 +25,32 @@ public class ShoppingCart extends HttpServlet
 		throws IOException, ServletException
 	{		
 		HttpSession session = request.getSession();
-		ArrayList previousItems = null;
+		ArrayList<String> cartList = null;
 		//critical section ~ retrieve the list of items in cart if it already exists
 		//if not, create a new cart with the item added to it.
 		synchronized(session)
 		{
-			previousItems = (ArrayList)session.getAttribute("previousItems");
-			//if previousItems list from the cart does not already exist, create one
-			if(previousItems == null)
+			cartList = (ArrayList<String>)session.getAttribute("cartList");
+			//if  cartList from the cart does not already exist, create one
+			if(cartList == null)
 			{
-				previousItems = new ArrayList();
-				session.setAttribute("previousItems",previousItems);
+				cartList = new ArrayList<String>();
+				session.setAttribute("cartList",cartList);
 			}
 		}
 		
 		int parameterCount = request.getParameterMap().size();
 		if(parameterCount > 0)
-		{
-			try
-			{		
-				Integer id = Integer.valueOf((String)request.getParameter("id"));
-				if(id == null)
-				{
-					System.out.println("id value is null");
-				}
-			}
-			catch(NumberFormatException e)
+		{	
+			String id = (String)request.getParameter("id");
+			if(id == null)
 			{
-				e.printStackTrace();
-				System.out.println("Not a valid number! " + (String)request.getParameter("id"));
+				System.out.println("id value is null");
+			}
+			else if(cartList != null)
+			{
+				System.out.println("id: " + id);
+				cartList.add(id);
 			}
 		}
 		else
@@ -61,8 +58,10 @@ public class ShoppingCart extends HttpServlet
 			System.out.println("Zero parameters were passed!");
 		}
 		
-		//System.out.println("going to the next page!");
-		response.sendRedirect("http://localhost:8080/ShoppingCart/AddToCartDisplay.jsp");
+		//how to have /ShoppingCart/view-shopping-cart be linked to ShoppingCart/AddToCartDisplay.jsp
+		
+		System.out.println("going to the next page!");
+		response.sendRedirect("http://localhost:8080/ShoppingCart/AddToCartDisplay.jsp");//ShoppingCart/AddToCartDisplay.jsp"
 		
 	/* 	//retrieve the newItem to be added to cart from HttpServletRequest
 		String newItem = request.getParameter("newItem");
