@@ -6,7 +6,7 @@
         Integer offset = (int)request.getAttribute("searchOffset");
         Integer limit = (int)request.getAttribute("searchLimit");
         if (offset == null || limit==null) {
-        } else if (offset != -1 && limit != -1) {
+        } else if (offset > -1 && limit > -1) {
             int pages = count/limit;
             if (count % limit != 0) {
                 ++pages;
@@ -29,23 +29,32 @@
             if (pages > 20) {
                 limitPages = true;
                 pages = 20;
-                if (offset > 0) { %>
-                <%= "<a href=\"/search/query"
-                    +params+"offset="+Integer.toString(Math.max(0,offset-limit))
-                    +"\">Previous</a>" %>
-                <% }
             }
-            int pageStart=Math.max(0,offset/limit-10);
+            if (offset > 0) { %>
+                <%= " <a href=\"/search/query"
+                    +params+"offset=0"
+                    +"\"> First </a>"+
+                    "<a href=\"/search/query"
+                    +params+"offset="+Integer.toString(Math.max(0,offset-limit))
+                    +"\"> Previous </a> " %>
+                <% 
+            }
+            int pageStart=Math.min(Math.max(0,offset/limit-10),
+                count/limit-20+(count%limit==0 ? 0 : 1));
             for (int i=pageStart;i<pages+pageStart;++i) {
-    %>
-            <%= "<a href=\"/search/query"
+            %>
+            <%= " <a href=\"/search/query"
                 +params+"offset="+Integer.toString(i*limit)+paramsEnd
-                +"\">"+Integer.toString(i+1)+"</a>" %>
-    <%      }
-            if (limitPages && offset+limit<count) { %>
-            <%= "<a href=\"/search/query"
+                +"\">"+Integer.toString(i+1)+"</a> " %>
+         <% }
+            if (offset+limit<count) { %>
+            <%= " <a href=\"/search/query"
                 +params+"offset="+Integer.toString(offset+limit)
-                +"\">Next</a>" %>
+                +"\">Next</a> "+
+                "<a href=\"/search/query"
+                +params+"offset="+Integer.toString(count-limit)
+                +"\">Last</a> "
+            %>
             <% }
         } else { %>
     <% } %>
