@@ -62,6 +62,7 @@
 <% } else { %>
 <form action="/search/query" method="GET">
     title: <input type="TEXT" name="name" /> <BR />
+    year: <input type="TEXT" name="year" /> <BR />
     genre: <input type="TEXT" name="genre" /> <BR />
     platform: <input type="TEXT" name="platform" /> <BR />
     publisher: <input type="TEXT" name="publisher" /> <BR />

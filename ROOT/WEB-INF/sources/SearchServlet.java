@@ -210,6 +210,7 @@ public class SearchServlet extends HttpServlet
             query = "SELECT DISTINCT "+table+".* FROM games, publishers, platforms, genres, "+masterTable+" WHERE "
                 +"games.id=game_id AND publishers.id=publisher_id AND platforms.id=platform_id";
             query+=addSearchTerm(request,"name",useSubMatch);
+            query+=addSearchTerm(request,"year",useSubMatch);
             query+=addSearchTerm(request,"publisher",useSubMatch);
             query+=addSearchTerm(request,"genre",useSubMatch);
             query+=addSearchTerm(request,"platform",useSubMatch);
@@ -223,6 +224,7 @@ public class SearchServlet extends HttpServlet
 
             int statementOffset = 1;
             statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"year",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"publisher",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"genre",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"platform",statement,statementOffset,useSubMatch);
@@ -235,6 +237,7 @@ public class SearchServlet extends HttpServlet
             statement = dbcon.prepareStatement(query);
             statementOffset = 1;
             statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
+            statementOffset = setSearchTerm(request,"year",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"publisher",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"genre",statement,statementOffset,useSubMatch);
             statementOffset = setSearchTerm(request,"platform",statement,statementOffset,useSubMatch);
