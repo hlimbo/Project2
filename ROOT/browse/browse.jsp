@@ -9,21 +9,22 @@
         tables.add("publishers");
         //tables.add("genres");
         //tables.add("platforms");
-        for (String table : tables) { %>
-        <%= "<li class=\"browseList\" ><a href=\"/search/query?table="+table+"\">"+table+"</a>" %>
+        for (String table : tables) { 
+            String column;
+            if (table.compareToIgnoreCase("games")!=0) { 
+                column = table.substring(0,table.length()-1);
+            } else { 
+                column = "name";
+            }  %>
+        <%= "<li class=\"browseList\" ><a href=\"/search/query?table="+table+"&order="+column+"\">"+table+"</a>" %>
             <ul class="letterList" >
                 <% for (char firstLetter = '0';firstLetter<='z';++firstLetter) { 
-                    String column;
                     if (ignores.containsKey(table) && ignores.get(table).indexOf(firstLetter) != -1) {
                         continue;
                     }
-                    if (table.compareToIgnoreCase("games")!=0) { 
-                        column = table.substring(0,table.length()-1);
-                    } else { 
-                        column = "name";
-                    } %>
+                    %>
                     <%= "<li class=\"letterList\"><a href=\"search/query?table="+table+"&columnName="+column
-                        +"&"+column+"="+firstLetter+"%25&match=true\" >"+(""+firstLetter).toUpperCase()
+                        +"&"+column+"="+firstLetter+"%25&match=true&order="+column+"\" >"+(""+firstLetter).toUpperCase()
                         +"</a></li>" %>
                 <% 
                     if (firstLetter=='9') {
