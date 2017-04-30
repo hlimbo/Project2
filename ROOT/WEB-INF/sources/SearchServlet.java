@@ -339,7 +339,7 @@ public class SearchServlet extends HttpServlet
                 while (rs.next())
                 {
                     results+="<tr>"+tableRow(rs,table,links,images,externalLinks,ignores)+"</tr>";
-                    results+=cartButton(Integer.toString(rs.getInt(1)),"1");
+                    //results+=cartButton(Integer.toString(rs.getInt(1)),"1");
                 }
             }
             results+="</TABLE>";
