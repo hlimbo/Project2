@@ -68,7 +68,7 @@
                     </li>
             </ul>
     </li>
-    <li class="browseList" ><a href="/search/query?table=genres">platforms</a>
+    <li class="browseList" ><a href="/search/query?table=platforms">platforms</a>
             <ul class="letterList" >
                     <li class="letterList">
                         <a href="search/query?table=platforms&columnName=platform&platform=2%25&match=true" >2</a>
