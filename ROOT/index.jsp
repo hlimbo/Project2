@@ -19,7 +19,7 @@ limitations under the License.
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Welcome</title>
+		<TITLE>Games Station | Main</TITLE>
         <link href="/tomcat.css" rel="stylesheet" type="text/css" />
         <style>
         .letterList {
