@@ -303,15 +303,21 @@ public class SearchServlet extends HttpServlet
                 }
                 //get publishers
                 for (int i=0;i<gameIDs.size();++i) {
-                    query="SELECT DISTINCT publisher FROM publishers JOIN publishers_of_games ON id=publisher_id WHERE game_id=?";
+                    //query="SELECT DISTINCT publisher FROM publishers JOIN publishers_of_games ON id=publisher_id WHERE game_id=?";
+                    query="SELECT DISTINCT publisher, platform FROM publishers "
+                        +"JOIN publishers_of_games ON publishers.id=publisher_id "
+                        +"JOIN platforms ON platforms.id=platform_id WHERE game_id=?";
                     PreparedStatement pubStatement =dbcon.prepareStatement(query);
                     pubStatement.setInt(1,gameIDs.get(i));
                     rs = pubStatement.executeQuery();
                     records.set(i,records.get(i)+"<tr><td>publishers: </td><td>");
                     while (rs.next()) {
-                        records.set(i,"<ul>"+records.get(i)+tableRow(rs,table,links,
+                        records.set(i,records.get(i)+"\n<ul style=\""
+                                +"list-style-type:none;\">"
+                                +tableRow(rs,table,links,
                                     images,externalLinks,
-                                    ignores).replaceAll("<td>","<li>").replaceAll("</td>","</li>")+"</ul>");
+                                    ignores).replaceAll("<td>","<li style=\"display:inline;margin 20px\">"
+                                        ).replaceAll("</td>","</li> ")+"</ul>");
                     }
                     records.set(i,records.get(i)+"</td></tr>");
                 }
