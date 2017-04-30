@@ -18,7 +18,7 @@
 		<p> Welcome, <%= (String)session.getAttribute("first_name") %>! </p>
 	<div>
         <jsp:include page="/headerLinks.jsp" />
-        Browse by 
+        Browse
         <jsp:include page="/browse/browse.jsp" />
         Search
         <jsp:include page="/search/search.jsp" />

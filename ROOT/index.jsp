@@ -33,7 +33,7 @@ limitations under the License.
 		<h1>Games Station Main Page</h1>
         <% if (session.getAttribute("first_name") != null) { %>
             <jsp:include page="/headerLinks.jsp" />
-            Browse by 
+            Browse
             <jsp:include page="/browse/browse.jsp" />
             Search
             <jsp:include page="/search/search.jsp" />
