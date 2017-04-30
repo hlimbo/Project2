@@ -49,6 +49,16 @@
 	<servlet-name>ClearCartServlet</servlet-name>
 	<url-pattern>/clear-cart</url-pattern>
    </servlet-mapping>
+   
+<servlet>
+	<servlet-name>DeleteItemServlet</servlet-name>
+	<servlet-class>DeleteItem</servlet-class>
+</servlet>
+  
+<servlet-mapping>
+	<servlet-name>DeleteItemServlet</servlet-name>
+	<url-pattern>/delete-item</url-pattern>
+</servlet-mapping>
   
 
 </web-app>
