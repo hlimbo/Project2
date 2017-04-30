@@ -19,8 +19,8 @@
                 if (offsetEnd == -1) {
                     params=params.substring(0,offsetStart);
                 } else {
-                    params=params.substring(0,offsetStart);
                     paramsEnd=params.substring(offsetStart+offsetEnd);
+                    params=params.substring(0,offsetStart);
                 }
             } else {
                 params=params+"&";

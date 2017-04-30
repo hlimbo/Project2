@@ -262,11 +262,11 @@ public class SearchServlet extends HttpServlet
             int orderStart = requestUrl.indexOf("order=");
             if (orderStart > -1) {
                 int orderEnd = requestUrl.substring(orderStart).indexOf("&");
-                if (orderEnd == -1) {
+                if (orderEnd <= -1) {
                     requestUrl=requestUrl.substring(0,orderStart);
                 } else {
-                    requestUrl=requestUrl.substring(0,orderStart);
                     requestUrlEnd=requestUrl.substring(orderStart+orderEnd);
+                    requestUrl=requestUrl.substring(0,orderStart);
                 }
             } else {
                 requestUrl+="&";
@@ -321,8 +321,9 @@ public class SearchServlet extends HttpServlet
                     "<HEAD><TITLE>" +
                     "gamedb: Error" +
                     "</TITLE></HEAD>\n<BODY>" +
-                    "<P>Error in doGet: " +
-                    ex.getMessage() +"<br />\n"+returnLink+"</P></BODY></HTML>");
+                    "<P>Error in doGet: ");
+            ex.printStackTrace(out);
+            out.println(ex.getMessage() + "<br />\n"+returnLink+"</P></BODY></HTML>");
             out.close();
             return;
         }
