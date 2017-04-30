@@ -14,7 +14,7 @@ public class DisplayServlet extends HttpServlet
     }
 
     private String cartButton (String id, String name,String price, String quantity) {
-        String button = "<tr><td><form action=\"/ShoppingCart/AddToCartDisplay.jsp\" method=\"GET\">";
+        String button = "<tr><td><form action=\"/ShoppingCart/view-shopping-cart\" method=\"GET\">";
         button+="<input type=\"HIDDEN\" name=id value=\""+id+"\" \\>";
         button+="<input type=\"HIDDEN\" name=\"quantity\" value=\""+quantity+"\" \\>";
         button+="<input type=\"SUBMIT\" value=\"Add to Shopping Cart\" \\>";

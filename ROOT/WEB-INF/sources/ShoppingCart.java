@@ -33,9 +33,9 @@ public class ShoppingCart extends HttpServlet
 			ArrayList<?> attrs = (ArrayList<?>)session.getAttribute("cartList");
             if (attrs != null) {
                 cartList = new ArrayList<String>();
-            }
-            for (Object attr : attrs) {
-                cartList.add((String)attr);
+                for (Object attr : attrs) {
+                    cartList.add((String)attr);
+                }
             }
 			//if  cartList from the cart does not already exist, create one
 			if(cartList == null)

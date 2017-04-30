@@ -69,7 +69,7 @@
 
   <servlet-mapping>
    <servlet-name>ShoppingCartServlet</servlet-name>
-   <url-pattern>/ShoppingCart/view-shopping-cart/</url-pattern>
+   <url-pattern>/ShoppingCart/view-shopping-cart</url-pattern>
   
 	<!-- <servlet-name>ShoppingCartDisplayServlet</servlet-name>
 	<url-pattern>/servlet/customer-info</url-pattern> -->

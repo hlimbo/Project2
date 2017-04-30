@@ -27,9 +27,9 @@ public class ShoppingCartDisplay extends HttpServlet
 			ArrayList<?> attrs = (ArrayList<?>)session.getAttribute("previousItems");
             if (attrs != null) {
                 previousItems = new ArrayList<String>();
-            }
-            for (Object attr : attrs) {
-                previousItems.add((String)attr);
+                for (Object attr : attrs) {
+                    previousItems.add((String)attr);
+                }
             }
 			//if previousItems list from the cart does not already exist, create one
 			if(previousItems == null)
