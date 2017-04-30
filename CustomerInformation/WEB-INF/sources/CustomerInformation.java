@@ -59,7 +59,7 @@ public class CustomerInformation extends HttpServlet
 				System.out.println(first_name + " " + last_name + " was found in the creditcards table");
 				
 				//for every item in cart,insert each successful purchased item into sales table.
-				String customerIdQuery = "SELECT id FROM customers WHERE first_name='" + first_name + "' and last_name='" + last_name + "";//"' and cc_id='" + cc_id + "';";	
+				String customerIdQuery = "SELECT id FROM customers WHERE first_name='" + first_name + "' and last_name='" + last_name + "'";//"' and cc_id='" + cc_id + "';";	
 				
 				ResultSet custIdSet = statement.executeQuery(customerIdQuery);
 				Integer customerID = null;
@@ -70,10 +70,13 @@ public class CustomerInformation extends HttpServlet
 				else
 				{
 					System.out.println("Customer's identity could not be verified in the database");
+					session.setAttribute("invalidFlag","Customer's identity: " + first_name +  " could not be verified in the database");
+					response.sendRedirect("http://localhost:8080/CustomerInformation/confirmationPage.jsp");
+					return;
 				}
 				
 				//TODO(HARVEY): get every game id user placed in her/his cart.
-				ArrayList<Integer> cart = (ArrayList<Integer>)session.getAttribute("cartList");
+				ArrayList<String> cart = (ArrayList<String>)session.getAttribute("cartList");
 				String gameIdQuery = "SELECT id FROM games WHERE id = ?";
 				String insertQuery = "INSERT INTO sales (customer_id, salesdate, game_id) VALUES( ?, CURDATE(), ?)";
 				PreparedStatement gameIDStatement = dbcon.prepareStatement(gameIdQuery);
@@ -81,9 +84,9 @@ public class CustomerInformation extends HttpServlet
 				//used to verify if the game id is a valid id in the database.
 				if(cart != null && !cart.isEmpty())
 				{
-					for(Integer itemID : cart)
+					for(String itemID : cart)
 					{
-						gameIDStatement.setInt(1, itemID);
+						gameIDStatement.setInt(1, Integer.valueOf(itemID));
 						ResultSet gameIdSet = gameIDStatement.executeQuery();
 						if(gameIdSet.next())
 						{
