@@ -21,9 +21,9 @@
 
 <web-app>
 
-    <display-name>Test Tomcat Connection to MySQL DB</display-name>
+    <display-name>Shopping Cart</display-name>
     <description>
-      Test Tomcat Connection to mySQL DB
+      Shopping Cart
     </description>
 
 
@@ -41,7 +41,7 @@
 
   <servlet-mapping>
    <servlet-name>ShoppingCartServlet</servlet-name>
-    <url-pattern>/servlet/ShoppingCart</url-pattern>
+    <url-pattern>/view-shopping-cart</url-pattern>
   
 	<!-- <servlet-name>ShoppingCartDisplayServlet</servlet-name>
 	<url-pattern>/servlet/customer-info</url-pattern> -->

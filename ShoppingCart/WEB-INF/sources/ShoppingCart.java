@@ -39,7 +39,29 @@ public class ShoppingCart extends HttpServlet
 			}
 		}
 		
-		System.out.println("going to the next page!");
+		int parameterCount = request.getParameterMap().size();
+		if(parameterCount > 0)
+		{
+			try
+			{		
+				Integer id = Integer.valueOf((String)request.getParameter("id"));
+				if(id == null)
+				{
+					System.out.println("id value is null");
+				}
+			}
+			catch(NumberFormatException e)
+			{
+				e.printStackTrace();
+				System.out.println("Not a valid number! " + (String)request.getParameter("id"));
+			}
+		}
+		else
+		{
+			System.out.println("Zero parameters were passed!");
+		}
+		
+		//System.out.println("going to the next page!");
 		response.sendRedirect("http://localhost:8080/ShoppingCart/AddToCartDisplay.jsp");
 		
 	/* 	//retrieve the newItem to be added to cart from HttpServletRequest

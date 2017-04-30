@@ -59,7 +59,7 @@ public class CustomerInformation extends HttpServlet
 				System.out.println(first_name + " " + last_name + " was found in the creditcards table");
 				
 				//for every item in cart,insert each successful purchased item into sales table.
-				String customerIdQuery = "SELECT id FROM customers WHERE first_name='" + first_name + "' and last_name='" + last_name + "' and cc_id='" + cc_id + "';";	
+				String customerIdQuery = "SELECT id FROM customers WHERE first_name='" + first_name + "' and last_name='" + last_name + "";//"' and cc_id='" + cc_id + "';";	
 				
 				ResultSet custIdSet = statement.executeQuery(customerIdQuery);
 				Integer customerID = null;
