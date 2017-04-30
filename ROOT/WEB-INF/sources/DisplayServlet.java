@@ -17,7 +17,7 @@ public class DisplayServlet extends HttpServlet
         String button = "<tr><td><form action=\"/ShoppingCart/AddToCartDisplay.jsp\" method=\"GET\">";
         button+="<input type=\"HIDDEN\" name=id value=\""+id+"\" \\>";
         button+="<input type=\"HIDDEN\" name=\"quantity\" value=\""+quantity+"\" \\>";
-        button+="<input type=\"SUBMIT\" value=\"Checkout\" \\>";
+        button+="<input type=\"SUBMIT\" value=\"Add to Shopping Cart\" \\>";
         button+="</form></td></tr>";
         return button;
     }
@@ -26,7 +26,8 @@ public class DisplayServlet extends HttpServlet
             Hashtable<String,Boolean> fieldIgnores, Hashtable<String,Boolean> links,
             Hashtable<String,Boolean> images, Hashtable<String,Boolean> externalLinks) throws UnsupportedEncodingException {
         if (fieldIgnores.containsKey(column) && fieldIgnores.get(column)
-                && (table.compareToIgnoreCase("games") != 0 || column.compareToIgnoreCase("id") != 0)) {
+                && (table.compareToIgnoreCase("games") != 0 || column.compareToIgnoreCase("id") != 0)
+                && (table.compareToIgnoreCase("publishers") !=0 || column.compareToIgnoreCase("logo") !=0)) {
             return null;
         } else if (links.containsKey(column) && links.get(column)) {
             String fieldUrl = "/display/query?table="+table+
@@ -126,6 +127,11 @@ public class DisplayServlet extends HttpServlet
             fieldIgnores.put("publisher_id",true);
             fieldIgnores.put("globalsales",true);
             fieldIgnores.put("rank",true);
+            if (table.compareToIgnoreCase("games")!=0) {
+                fieldIgnores.put("url",true);
+                fieldIgnores.put("trailer",true);
+                fieldIgnores.put("logo",true);
+            }
             //Sets which fields to hyperlink. Configuration option
             Hashtable<String,Boolean> links = new Hashtable<String,Boolean>();
             links.put("name",true);

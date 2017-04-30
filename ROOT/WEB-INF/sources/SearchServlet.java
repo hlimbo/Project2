@@ -58,7 +58,7 @@ public class SearchServlet extends HttpServlet
     }
 
 	private static String tableRow (ResultSet result,String table, Hashtable<String,Boolean> link,
-            Hashtable<String,Boolean> images, Hashtable<String,Boolean> externalLinks) throws SQLException {
+            Hashtable<String,Boolean> images, Hashtable<String,Boolean> externalLinks, Hashtable<String,Boolean> ignores) throws SQLException {
 		ResultSetMetaData meta = result.getMetaData();
 	    String resString = "";
 		resString+="<tr>";
@@ -91,6 +91,9 @@ public class SearchServlet extends HttpServlet
 			}
             //handle nulls and empty values here
 			String colName = meta.getColumnName(i);
+            if (ignores.containsKey(colName) && ignores.get(colName)) {
+                continue;
+            }
             if (value==null || value.trim().compareTo("") == 0) {
                 if (images.containsKey(colName) && images.get(colName)){
                     resString+="<td><img src=\""
@@ -257,6 +260,12 @@ public class SearchServlet extends HttpServlet
             externalLinks.put("trailer",true);
             Hashtable<String,Boolean> images = new Hashtable<String,Boolean>();
             images.put("logo",true);
+            Hashtable<String,Boolean> ignores = new Hashtable<String,Boolean>();
+            ignores.put("url",true);
+            ignores.put("logo",true);
+            ignores.put("trailer",true);
+            ignores.put("rank",true);
+            ignores.put("globalsales",true);
 
             ResultSetMetaData meta = rs.getMetaData();
             results+="<tr>";
@@ -276,14 +285,28 @@ public class SearchServlet extends HttpServlet
             }
             for (int i=1;i<=meta.getColumnCount();++i) {
                 String column = meta.getColumnName(i);
+                if (ignores.containsKey(column) && ignores.get(column)) {
+                    continue;
+                }
                 results+="<td><a href=\"/search/query"+requestUrl+"order="+column
                     +requestUrlEnd+"\">"+column+"</a></td>";
             }
             results+="</tr>";
+            ArrayList<String> records= new ArrayList<String>();
+            ArrayList<String> gameIDs = new ArrayList<String>();
+            int i = 0;
             while (rs.next())
             {
-                results+=tableRow(rs,table,links,images,externalLinks);
-                results+=cartButton(Integer.toString(rs.getInt(1)),"1");
+                records.add(tableRow(rs,table,links,images,externalLinks,ignores));
+                //gameIDs.add(null);
+                //results+=tableRow(rs,table,links,images,externalLinks);
+                //results+=cartButton(Integer.toString(rs.getInt(1)),"1");
+            }
+            for (String record : records) {
+                results+=record;
+                /*if (gameIDs.get(i) != null) {
+                    results+=cartButton(Integer.toString(gameIDs.get(i)),"1");
+                }*/
             }
             results+="</TABLE>";
 
