@@ -39,8 +39,8 @@
                     +"\"> Previous </a> " %>
                 <% 
             }
-            int pageStart=Math.min(Math.max(0,offset/limit-10),
-                count/limit-20+(count%limit==0 ? 0 : 1));
+            int pageStart=Math.max(0,Math.min(offset/limit-10,
+                count/limit-20+(count%limit==0 ? 0 : 1)));
             for (int i=pageStart;i<pages+pageStart;++i) {
             %>
             <%= " <a href=\"/search/query"
