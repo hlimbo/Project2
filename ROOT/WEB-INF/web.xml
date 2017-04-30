@@ -69,11 +69,22 @@
 
   <servlet-mapping>
    <servlet-name>ShoppingCartServlet</servlet-name>
-    <url-pattern>/servlet/ShoppingCart</url-pattern>
+   <url-pattern>/ShoppingCart/view-shopping-cart/</url-pattern>
   
 	<!-- <servlet-name>ShoppingCartDisplayServlet</servlet-name>
 	<url-pattern>/servlet/customer-info</url-pattern> -->
   
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>CustomerInformationServlet</servlet-name>
+    <servlet-class>CustomerInformation</servlet-class>
+  </servlet>
+
+
+  <servlet-mapping>
+    <servlet-name>CustomerInformationServlet</servlet-name>
+    <url-pattern>/CustomerInformation/customer-info-confirmation</url-pattern>
   </servlet-mapping>
 
 </web-app>
