@@ -177,7 +177,7 @@ public class SearchServlet extends HttpServlet
                 Integer lim = Integer.parseInt(limit);
                 if (lim > limitMax) {
                     lim=limitMax;
-                } else if (lim < 0) {
+                } else if (lim < 1) {
                     lim=1;
                 }
                 limit = lim.toString();
