@@ -65,5 +65,10 @@
 		
 		<% } %>
 		
+		<!-- back to home page -->
+		<form action="/index.jsp" method="GET">
+			<button name="backToHome">Back to Home</button>
+		</form>
+		
 	</BODY>
 </HTML>
