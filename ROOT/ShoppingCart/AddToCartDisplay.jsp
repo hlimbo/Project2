@@ -82,7 +82,7 @@
 						<td> <%= set.getInt("price") %> </td>
 						<td> 
 							<span>
-								<input class="qtextbox" type="text" name="quantity" value=<%= item.getValue() %>>
+								<input class="qtextbox" disabled="disabled" type="text" name="quantity" value=<%= item.getValue() %>>
 								
 								<form class="qControlBox" name="updateForm" action="/ShoppingCart/update-quantity" method="GET">
 									<input type="hidden" name="itemID" value=<%= item.getKey() %> >
