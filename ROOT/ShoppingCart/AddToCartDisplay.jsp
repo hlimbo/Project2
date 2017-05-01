@@ -135,6 +135,13 @@
 			</form>
 		<% } %>
 		
+		<!-- back to previous page -->
+		<% if( request.getParameter("previousPage") != null ){%>
+			<form action=<%= request.getParameter("previousPage") %> method="GET">
+				<button name="backToPrev">Back to Previous Page</button>
+			</form>
+		<% } %>
+		
 		<!-- back to home page -->
 		<form action="/index.jsp" method="GET">
 			<button name="backToHome">Back to Home</button>
