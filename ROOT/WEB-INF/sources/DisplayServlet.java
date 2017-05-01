@@ -218,6 +218,7 @@ public class DisplayServlet extends HttpServlet
                                             gameID=Integer.toString(parentResult.getInt(1));
                                             gameName=parentResult.getString(3);
                                             gamePrice=parentResult.getString(6);
+                                            checkouts.add(cartButton(gameID,gameName,gamePrice,"1"));
                                         }
                                         String fieldValue = parentResult.getString(j);
                                         if (fieldValue == null) {
@@ -247,9 +248,9 @@ public class DisplayServlet extends HttpServlet
                                         } else {
                                             fields.add(row,fieldValue);
                                         }
-                                        if (parentTable.trim().compareToIgnoreCase("games")==0) {
-                                            checkouts.add(cartButton(gameID,gameName,gamePrice,"1"));
-                                        }
+                                        //if (parentTable.trim().compareToIgnoreCase("games")==0) {
+                                            //checkouts.add(cartButton(gameID,gameName,gamePrice,"1"));
+                                        //}
                                     }
                                     //if (parentTable.trim().compareToIgnoreCase("games")==0) {
                                         //fields.set(row,fields.get(row)+cartButton(gameID,gameName,gamePrice,"1"));
@@ -268,7 +269,7 @@ public class DisplayServlet extends HttpServlet
                         if (table.compareToIgnoreCase("games") != 0) {
                             results+=checkouts.get(i);
                         }
-                        results+="</tr>";
+                        results+="</tr>\n";
                     }
                     results += "</td></TABLE>";
                     results+="</tr>\n";
