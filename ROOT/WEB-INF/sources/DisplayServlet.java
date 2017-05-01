@@ -19,7 +19,8 @@ public class DisplayServlet extends HttpServlet
         button+="<input type=\"HIDDEN\" name=\"quantity\" value=\""+quantity+"\" \\>";
         try {
             button+="<input type=\"HIDDEN\" name=\"previousPage\" value=\""
-                +URLEncoder.encode(request.getRequestURI(), "UTF-8")+"\" \\>";
+                +URLEncoder.encode(request.getRequestURI(), "UTF-8")+"%3F"
+                +URLEncoder.encode(request.getQueryString(), "UTF-8")+"\" \\>";
         } catch (UnsupportedEncodingException e){
         }
         button+="<input type=\"SUBMIT\" value=\"Add to Shopping Cart\" \\>";
