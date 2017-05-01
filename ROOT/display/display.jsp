@@ -32,10 +32,10 @@
             }
             if (offset > 0) { %>
                 <%= " <a href=\"/display/query"
-                    +params+"offset=0"
+                    +params+"offset=0"+paramsEnd
                     +"\"> First </a>"+
                     "<a href=\"/display/query"
-                    +params+"offset="+Integer.toString(Math.max(0,offset-limit))
+                    +params+"offset="+Integer.toString(Math.max(0,offset-limit))+paramsEnd
                     +"\"> Previous </a> " %>
                 <% 
             }
@@ -49,10 +49,10 @@
          <% }
             if (offset+limit<count) { %>
             <%= " <a href=\"/display/query"
-                +params+"offset="+Integer.toString(offset+limit)
+                +params+"offset="+Integer.toString(offset+limit)+paramsEnd
                 +"\">Next</a> "+
                 "<a href=\"/display/query"
-                +params+"offset="+Integer.toString(count-limit)
+                +params+"offset="+Integer.toString(count-limit)+paramsEnd
                 +"\">Last</a> "
             %>
             <% }
