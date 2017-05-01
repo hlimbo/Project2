@@ -15,6 +15,7 @@
 
     <body>
         <% if (session.getAttribute("first_name") != null) { %>
+            <jsp:include page="/headerLinks.jsp" />
             <jsp:include page="/browse/browse.jsp" />
         <% } else { %>
             <a href="/LoginPage">Login</a> 
