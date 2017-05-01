@@ -75,8 +75,7 @@ public class CustomerInformation extends HttpServlet
 					return;
 				}
 				
-				//TODO(HARVEY): get every game id user placed in her/his cart.
-				ArrayList<String> cart = (ArrayList<String>)session.getAttribute("cartList");
+				HashMap<String,Integer> cart = (HashMap<String,Integer>)session.getAttribute("cartList");
 				String gameIdQuery = "SELECT id FROM games WHERE id = ?";
 				String insertQuery = "INSERT INTO sales (customer_id, salesdate, game_id) VALUES( ?, CURDATE(), ?)";
 				PreparedStatement gameIDStatement = dbcon.prepareStatement(gameIdQuery);
@@ -84,9 +83,9 @@ public class CustomerInformation extends HttpServlet
 				//used to verify if the game id is a valid id in the database.
 				if(cart != null && !cart.isEmpty())
 				{
-					for(String itemID : cart)
+					for(Map.Entry<String,Integer> item : cart.entrySet())
 					{
-						gameIDStatement.setInt(1, Integer.valueOf(itemID));
+						gameIDStatement.setInt(1, Integer.valueOf(item.getKey()));
 						ResultSet gameIdSet = gameIDStatement.executeQuery();
 						if(gameIdSet.next())
 						{
@@ -97,7 +96,7 @@ public class CustomerInformation extends HttpServlet
 						}
 						else
 						{
-							System.out.println("Game ID: " + itemID + " does not exist in the games table");
+							System.out.println("Game ID: " + item.getKey() + " does not exist in the games table");
 						}
 					}
 				}

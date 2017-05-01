@@ -41,17 +41,18 @@
 		</thead>
 		
 		<tbody>
-		<% ArrayList<String> cart = (ArrayList<String>)session.getAttribute("cartList"); %>	
+		<% HashMap<String,Integer> cart = (HashMap<String,Integer>)session.getAttribute("cartList"); %>	
 		<% String itemQuery = "SELECT * FROM games WHERE id=?"; %>
 		<% PreparedStatement statement = dbcon.prepareStatement(itemQuery); %>
-		<% for(String itemID : cart) { %>
-			<% statement.setInt(1, Integer.valueOf(itemID)); %>
+		<% for(Map.Entry<String,Integer> item : cart.entrySet()) { %>
+			<% statement.setInt(1, Integer.valueOf(item.getKey())); %>
 			<% ResultSet set = statement.executeQuery(); %>
 			<% if(set.next()) { %>
 				<tr>
-					<td><%= itemID %></td>
+					<td><%= item.getKey() %></td>
 					<td><%= set.getString("name") %> </td>
 					<td><%= set.getInt("price") %> </td>
+					<td><%= item.getValue() %> </td>
 				</tr>
 			<% } } %>
 		
@@ -62,6 +63,7 @@
 			<% cart.clear(); %>
 			<% cart = null; %>
 			<% session.setAttribute("cartList", null); %>
+			<% dbcon.close(); %>
 		
 		<% } %>
 		

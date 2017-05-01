@@ -24,7 +24,7 @@ public class ClearCart extends HttpServlet
 	{	
 		System.out.println("Clearcart.java");
 		HttpSession session = request.getSession(false);	
-		ArrayList<String> cartList = (ArrayList<String>)session.getAttribute("cartList");
+		HashMap<String,Integer> cartList = (HashMap<String,Integer>)session.getAttribute("cartList");
 		if(cartList == null)
 		{
 			System.out.println("Cart is already empty");
@@ -32,8 +32,9 @@ public class ClearCart extends HttpServlet
 		}
 		else
 		{
-			session.setAttribute("cartList", null);
+			cartList.clear();
 			cartList = null;
+			session.setAttribute("cartList", null);
 		}
 		
 		response.sendRedirect("http://localhost:8080/ShoppingCart/AddToCartDisplay.jsp");

@@ -106,5 +106,15 @@
     	<servlet-name>DeleteItemServlet</servlet-name>
         <url-pattern>/ShoppingCart/delete-item</url-pattern>
     </servlet-mapping>
+	
+   <servlet>
+    	<servlet-name>UpdateQuantityServlet</servlet-name>
+    	<servlet-class>UpdateQuantity</servlet-class>
+    </servlet>
+      
+    <servlet-mapping>
+    	<servlet-name>UpdateQuantityServlet</servlet-name>
+        <url-pattern>/ShoppingCart/update-quantity</url-pattern>
+    </servlet-mapping>
 
 </web-app>

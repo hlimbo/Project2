@@ -25,12 +25,21 @@
 				font-size: 24;
 				padding-right: 12;
 			}
+			.qtextbox
+			{
+				width: 30px;
+				text-align: center;
+			}
+			.qControlBox
+			{
+				display: inline;
+			}
 		</style>
 	
 	</HEAD>
 	
 	<BODY>	
-		
+	
 		<!-- HARDCODING... -->
 		<% String loginUser = "user"; %>
 		<% String loginPasswd = "password"; %>
@@ -71,9 +80,24 @@
 						<td><%= item.getKey() %></td>
 						<td> <%= set.getString("name") %> </td>
 						<td> <%= set.getInt("price") %> </td>
-						<td> <input type="text" name="quantity" value=<%= item.getValue() %>> </td>
 						<td> 
-							<form action="/ShoppingCart/delete-item" method="GET">
+							<span>
+								<input class="qtextbox" type="text" name="quantity" value=<%= item.getValue() %>>
+								
+								<form class="qControlBox" name="updateForm" action="/ShoppingCart/update-quantity" method="GET">
+									<input type="hidden" name="itemID" value=<%= item.getKey() %> >
+									<input type="hidden" name="updateFlag" value="increment" >
+									<button name="quantity ">+</button>
+								</form>
+								<form class="qControlBox" name="updateForm" action="/ShoppingCart/update-quantity" method="GET">
+									<input type="hidden" name="itemID" value=<%= item.getKey() %> >
+									<input type="hidden" name="updateFlag" value="decrement" >
+									<button id="q2" name="quantity ">-</button>
+								</form>
+							</span>
+						</td>
+						<td> 
+							<form name="deleteForm" action="/ShoppingCart/delete-item" method="GET">
 								<input type="hidden" name="itemID" value=<%= item.getKey() %> >
 								<button name="deleteItem"> Delete </button>
 							</form>
@@ -81,13 +105,15 @@
 					</tr>
 					
 					<!-- calculate total cost here -->
-					<% totalCost += set.getInt("price") * 1; %>
+					<% totalCost += set.getInt("price") * item.getValue(); %>
 					<% } %>
 				<% } } else { %>
 				<tr>
 					<p> Cart is Empty </p>
 				</tr>
 				<% } %>
+				
+				<% dbcon.close(); %>
 		</tbody>
 		</table>
 		
