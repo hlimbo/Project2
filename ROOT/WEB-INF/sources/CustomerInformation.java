@@ -76,7 +76,14 @@ public class CustomerInformation extends HttpServlet
 				}
 				
 				//TODO(HARVEY): get every game id user placed in her/his cart.
-				ArrayList<String> cart = (ArrayList<String>)session.getAttribute("cartList");
+				ArrayList<String> cart = null;
+			    ArrayList<?> attrs = (ArrayList<?>)session.getAttribute("cartList");
+                if (attrs != null) {
+                    cart = new ArrayList<String>();
+                    for (Object attr : attrs) {
+                        cart.add((String)attr);
+                    }
+                }
 				String gameIdQuery = "SELECT id FROM games WHERE id = ?";
 				String insertQuery = "INSERT INTO sales (customer_id, salesdate, game_id) VALUES( ?, CURDATE(), ?)";
 				PreparedStatement gameIDStatement = dbcon.prepareStatement(gameIdQuery);

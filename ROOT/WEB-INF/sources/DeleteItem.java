@@ -24,7 +24,14 @@ public class DeleteItem extends HttpServlet
 	{	
 		System.out.println("DeleteItem.java");
 		HttpSession session = request.getSession(false);	
-		ArrayList<String> cartList = (ArrayList<String>)session.getAttribute("cartList");
+		ArrayList<String> cartList = null;
+		ArrayList<?> attrs = (ArrayList<?>)session.getAttribute("cartList");
+        if (attrs != null) {
+            cartList = new ArrayList<String>();
+            for (Object attr : attrs) {
+                cartList.add((String)attr);
+            }
+        }
 		if(cartList == null)
 		{
 			System.out.println("Cannot remove item. Cart is already empty");
