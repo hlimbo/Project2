@@ -138,8 +138,8 @@ public class DisplayServlet extends HttpServlet
             links.put("publisher",true);
             links.put("genre",true);
             links.put("platform",true);
-            links.put("url",true);
             Hashtable<String,Boolean> externalLinks = new Hashtable<String,Boolean>();
+            externalLinks.put("url",true);
             externalLinks.put("trailer",true);
             Hashtable<String,Boolean> images = new Hashtable<String,Boolean>();
             images.put("logo",true);
@@ -164,14 +164,14 @@ public class DisplayServlet extends HttpServlet
                             continue;
                         }   
                     }
-                    fieldValue = getValue(table,columnName,fieldValue,fieldIgnores,links,images,externalLinks);
+                    if (table.trim().compareToIgnoreCase("games")==0 && columnName.trim().compareToIgnoreCase("url")==0) {
+                        fieldValue = getValue(table,"trailer",fieldValue,fieldIgnores,links,images,externalLinks);
+                    } else {
+                        fieldValue = getValue(table,columnName,fieldValue,fieldIgnores,links,images,externalLinks);
+                    }
                     if (fieldValue == null) {
                         continue;
                     }
-                    //strip <td> tags
-                    /*if (i==2) {
-                        results+="<TABLE border><tr>";
-                    }*/
                     if (i==1) {
                         fieldValue=fieldValue.substring(4,fieldValue.length()-5);
                         results+=fieldValue+"</td><td><TABLE border>";
@@ -179,9 +179,6 @@ public class DisplayServlet extends HttpServlet
                         results+=fieldValue;
                     }
                 }
-                /*if (meta.getColumnCount() > 1) {
-                    results+="</tr></TABLE>";
-                }*/
                 results+="</td></tr></TABLE>\n";
             }
             for (String tbl : tables) {
@@ -224,7 +221,7 @@ public class DisplayServlet extends HttpServlet
                                         if (fieldValue == null) {
                                             continue;
                                         }
-                                        if (parentColumn.compareToIgnoreCase("url") == 0) {
+                                        if (parentColumn.trim().compareToIgnoreCase("url") == 0) {
                                             fieldValue = getValue(parentTable,"trailer",fieldValue,fieldIgnores,links,images,externalLinks);
                                         } else {
                                             fieldValue = getValue(parentTable,parentColumn,fieldValue,fieldIgnores,links,images,externalLinks);
