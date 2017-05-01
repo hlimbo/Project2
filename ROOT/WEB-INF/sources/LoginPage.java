@@ -51,11 +51,11 @@ public class LoginPage extends HttpServlet
 				System.out.println("Success!");
 				Cookie cookie = new Cookie("login-cookie", session.getId());
 				cookie.setComment("Cook on client side used to identify the current user login");
-				//TODO(HARVEY):cookie.setDomain("http://localhost:8080");
+				//TODO(HARVEY):cookie.setDomain("");
 				//TODO(HARVEY): review cookie.setPath()
 				response.addCookie(cookie);
 				session.setAttribute("first_name",result.getString("first_name"));
-				response.sendRedirect("http://localhost:8080/LoginPage/LoginSuccess.jsp");
+				response.sendRedirect("/LoginPage/LoginSuccess.jsp");
 			}
 			else
 			{
@@ -63,7 +63,7 @@ public class LoginPage extends HttpServlet
 				{
 					System.out.println("Invalid username or password");
 					session.setAttribute("invalidLoginFlag", "Invalid email or password");
-					response.sendRedirect("http://localhost:8080/LoginPage");
+					response.sendRedirect("/LoginPage");
 				}
 				catch (IOException e)
 				{

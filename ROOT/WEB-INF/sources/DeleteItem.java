@@ -51,7 +51,7 @@ public class DeleteItem extends HttpServlet
 			}
 		}
 		
-		response.sendRedirect("http://localhost:8080/ShoppingCart/AddToCartDisplay.jsp");
+		response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp");
 		
 	}
 	

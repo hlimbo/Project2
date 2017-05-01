@@ -37,7 +37,7 @@ public class ClearCart extends HttpServlet
 			session.setAttribute("cartList", null);
 		}
 		
-		response.sendRedirect("http://localhost:8080/ShoppingCart/AddToCartDisplay.jsp");
+		response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp");
 		
 	}
 	

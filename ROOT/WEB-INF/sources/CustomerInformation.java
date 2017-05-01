@@ -71,7 +71,7 @@ public class CustomerInformation extends HttpServlet
 				{
 					System.out.println("Customer's identity could not be verified in the database");
 					session.setAttribute("invalidFlag","Customer's identity: " + first_name +  " could not be verified in the database");
-					response.sendRedirect("http://localhost:8080/CustomerInformation/confirmationPage.jsp");
+					response.sendRedirect("/CustomerInformation/confirmationPage.jsp");
 					return;
 				}
 				
@@ -106,13 +106,13 @@ public class CustomerInformation extends HttpServlet
 				}
 				
 				session.setAttribute("first_name",first_name);				
-				response.sendRedirect("http://localhost:8080/CustomerInformation/confirmationPage.jsp");
+				response.sendRedirect("/CustomerInformation/confirmationPage.jsp");
 			}
 			else if(rowCount > 1)
 			{
 				System.out.println("There are multiple records in the database with the same information");
 				session.setAttribute("invalidFlag","There are multiple records in the database with the same information");
-				response.sendRedirect("http://localhost:8080/CustomerInformation/confirmationPage.jsp");
+				response.sendRedirect("/CustomerInformation/confirmationPage.jsp");
 			}
 			else//if rowCount == 0
 			{
@@ -120,7 +120,7 @@ public class CustomerInformation extends HttpServlet
 				{
 					System.out.println("Supplied information not found or does not match in creditcards table");
 					session.setAttribute("invalidFlag", "Supplied information not found or does not match in creditcards table");
-					response.sendRedirect("http://localhost:8080/CustomerInformation/index.jsp");
+					response.sendRedirect("/CustomerInformation/index.jsp");
 				}
 				catch (IOException e)
 				{
