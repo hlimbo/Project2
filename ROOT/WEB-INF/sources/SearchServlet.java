@@ -314,7 +314,7 @@ public class SearchServlet extends HttpServlet
                     while (rs.next()) {
                         records.set(i,records.get(i)+"\n<ul style=\""
                                 +"list-style-type:none;\">"
-                                +tableRow(rs,table,links,
+                                +tableRow(rs,"publishers",links,
                                     images,externalLinks,
                                     ignores).replaceAll("<td>","<li style=\"display:inline;margin 20px\">"
                                         ).replaceAll("</td>","</li> ")+"</ul>");
@@ -329,7 +329,7 @@ public class SearchServlet extends HttpServlet
                     rs = genStatement.executeQuery();
                     records.set(i,records.get(i)+"<tr><td>genres: </td><td><ul>");
                     while (rs.next()) {
-                        records.set(i,records.get(i)+tableRow(rs,table,links,
+                        records.set(i,records.get(i)+tableRow(rs,"genres",links,
                                     images,externalLinks,
                                     ignores).replaceAll("<td>","<li>").replaceAll("</td>","</li>"));
                     }
