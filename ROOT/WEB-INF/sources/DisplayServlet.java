@@ -13,10 +13,15 @@ public class DisplayServlet extends HttpServlet
         return "Servlet connects to MySQL database and displays a single record within the database";
     }
 
-    private String cartButton (String id, String name,String price, String quantity) {
+    private String cartButton (String id, String name,String price, String quantity, HttpServletRequest request) {
         String button = "<tr><td><form action=\"/ShoppingCart/view-shopping-cart\" method=\"GET\">";
         button+="<input type=\"HIDDEN\" name=id value=\""+id+"\" \\>";
         button+="<input type=\"HIDDEN\" name=\"quantity\" value=\""+quantity+"\" \\>";
+        try {
+            button+="<input type=\"HIDDEN\" name=\"previousPage\" value=\""
+                +URLEncoder.encode(request.getRequestURI(), "UTF-8")+"\" \\>";
+        } catch (UnsupportedEncodingException e){
+        }
         button+="<input type=\"SUBMIT\" value=\"Add to Shopping Cart\" \\>";
         button+="</form></td></tr>";
         return button;
@@ -263,7 +268,7 @@ public class DisplayServlet extends HttpServlet
                                             gameID=Integer.toString(parentResult.getInt(1));
                                             gameName=parentResult.getString(3);
                                             gamePrice=parentResult.getString(6);
-                                            checkouts.add(cartButton(gameID,gameName,gamePrice,"1"));
+                                            checkouts.add(cartButton(gameID,gameName,gamePrice,"1",request));
                                         }
                                         String fieldValue = parentResult.getString(j);
                                         if (fieldValue == null) {
@@ -294,13 +299,13 @@ public class DisplayServlet extends HttpServlet
                                             fields.add(row,fieldValue);
                                         }
                                         //if (parentTable.trim().compareToIgnoreCase("games")==0) {
-                                            //checkouts.add(cartButton(gameID,gameName,gamePrice,"1"));
+                                            //checkouts.add(cartButton(gameID,gameName,gamePrice,"1",request));
                                         //}
                                     }
                                     //if (parentTable.trim().compareToIgnoreCase("games")==0) {
-                                        //fields.set(row,fields.get(row)+cartButton(gameID,gameName,gamePrice,"1"));
+                                        //fields.set(row,fields.get(row)+cartButton(gameID,gameName,gamePrice,"1",request));
                                         //fields.set(row,fields.get(row));
-                                        //checkouts.add(cartButton(gameID,gameName,gamePrice,"1"));
+                                        //checkouts.add(cartButton(gameID,gameName,gamePrice,"1",request));
                                     //}
                                 }
                                 parentResult.close();
@@ -321,7 +326,7 @@ public class DisplayServlet extends HttpServlet
                 }
             }
             if (table.compareToIgnoreCase("games") == 0) {
-                results+=cartButton(gameID,gameName,gamePrice,"1");
+                results+=cartButton(gameID,gameName,gamePrice,"1",request);
             }
             results+="</TABLE>";
 
