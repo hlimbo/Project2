@@ -33,11 +33,6 @@
 		<% dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd); %>
 		<% } catch (SQLException e) { %>
 		<% e.printStackTrace(); } %>
-		
-		<!--TODO(HARVEY): turn this into a list instead -->
-		<% session.setAttribute("game_name", request.getParameter("game_name")); %> 
-		<% session.setAttribute("price", request.getParameter("name")); %> 
-		<% session.setAttribute("quantity", request.getParameter("quantity")); %>
 	
 		<H1>Shopping Cart</H1>
 		
@@ -53,7 +48,6 @@
 			<th>Quantity</th>
 		</thead>
 		
-		<!-- TODO(HARVEY): get from session a list of items via id registered user added to his/her cart. -->
 		<% ArrayList<String> cart = (ArrayList<String>)session.getAttribute("cartList"); %>	
 		<tbody>
 			
@@ -87,15 +81,17 @@
 		
 		<hr>
 		
-		<!-- TODO(Harvey): Might change back to GET request in order to retrieve the items that will be bought from cart -->
-		<form action="/CustomerInformation/index.jsp" method="GET">
-			<button name="checkout">Continue To Checkout</button>
-		</form>
-		
-		<!-- clearing the cart contents -->
-		<form action="/ShoppingCart/clear-cart" method="GET">
-			<button name="clearCart">Clear Cart</button>
-		</form>
+		<!-- only display the checkout button if the cart is not empty -->
+		<% if (cart != null && !cart.isEmpty() ) { %>
+			<form action="/CustomerInformation/index.jsp" method="GET">
+				<button name="checkout">Continue To Checkout</button>
+			</form>
+			
+			<!-- clearing the cart contents -->
+			<form action="/ShoppingCart/clear-cart" method="GET">
+				<button name="clearCart">Clear Cart</button>
+			</form>
+		<% } %>
 		
 		<!-- back to home page -->
 		<form action="/index.jsp" method="GET">
