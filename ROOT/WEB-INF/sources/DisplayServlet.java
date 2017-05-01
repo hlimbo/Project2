@@ -164,7 +164,11 @@ public class DisplayServlet extends HttpServlet
                             continue;
                         }   
                     }
-                    fieldValue = getValue(table,columnName,fieldValue,fieldIgnores,links,images,externalLinks);
+                    if (table.trim().compareToIgnoreCase("games")==0 && columnName.trim().compareToIgnoreCase("url")==0) {
+                        fieldValue = getValue(table,"trailer",fieldValue,fieldIgnores,links,images,externalLinks);
+                    } else {
+                        fieldValue = getValue(table,columnName,fieldValue,fieldIgnores,links,images,externalLinks);
+                    }
                     if (fieldValue == null) {
                         continue;
                     }
