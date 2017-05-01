@@ -94,7 +94,12 @@
 		
 		<!-- clearing the cart contents -->
 		<form action="/ShoppingCart/clear-cart" method="GET">
-			<button name="clearCart"> Clear Cart</button>
+			<button name="clearCart">Clear Cart</button>
+		</form>
+		
+		<!-- back to home page -->
+		<form action="/index.jsp" method="GET">
+			<button name="backToHome">Back to Home</button>
 		</form>
 		
 	</BODY>
