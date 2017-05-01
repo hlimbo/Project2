@@ -48,10 +48,15 @@ public class SearchServlet extends HttpServlet
             return offset;
     }
 
-    private String cartButton (String id, String quantity) {
+    private String cartButton (String id, String quantity, HttpServletRequest request) {
         String button = "<tr><td><form action=\"/ShoppingCart/view-shopping-cart\" method=\"GET\">";
         button+="<input type=\"HIDDEN\" name=id value=\""+id+"\" \\>";
         button+="<input type=\"HIDDEN\" name=\"quantity\" value=\""+quantity+"\" \\>";
+        try {
+            button+="<input type=\"HIDDEN\" name=\"previousPage\" value=\""
+                +URLEncoder.encode(request.getRequestURI(), "UTF-8")+"\" \\>";
+        } catch (UnsupportedEncodingException e){
+        }
         button+="<input type=\"SUBMIT\" value=\"Add to Shopping Cart\" \\>";
         button+="</form></td></tr>";
         return button;
@@ -358,14 +363,14 @@ public class SearchServlet extends HttpServlet
                 int i=0;
                 for (String record : records) {
                     results+=record;
-                    results+=cartButton(Integer.toString(gameIDs.get(i)),"1");
+                    results+=cartButton(Integer.toString(gameIDs.get(i)),"1",request);
                     ++i;
                 }
             } else {
                 while (rs.next())
                 {
                     results+="<tr>"+tableRow(rs,links,images,externalLinks,ignores)+"</tr>";
-                    //results+=cartButton(Integer.toString(rs.getInt(1)),"1");
+                    //results+=cartButton(Integer.toString(rs.getInt(1)),"1",request);
                 }
             }
             results+="</TABLE>";
