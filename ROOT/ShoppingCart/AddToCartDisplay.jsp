@@ -17,6 +17,14 @@
 			{
 				color: red;
 			}
+			
+			.total
+			{
+				text-align: right;
+				font-weight: bold;
+				font-size: 24;
+				padding-right: 12;
+			}
 		</style>
 	
 	</HEAD>
@@ -49,6 +57,7 @@
 		</thead>
 		
 		<% ArrayList<String> cart = (ArrayList<String>)session.getAttribute("cartList"); %>	
+		<% int totalCost = 0; %>
 		<tbody>
 			
 				<% if ( cart != null && !cart.isEmpty() ) { %>
@@ -62,7 +71,7 @@
 						<td><%= item %></td>
 						<td> <%= set.getString("name") %> </td>
 						<td> <%= set.getInt("price") %> </td>
-						<td> <input type="text" name="quantity" value="1"> </td>
+						<td> <input type="text" name="quantity" > </td>
 						<td> 
 							<form action="/ShoppingCart/delete-item" method="GET">
 								<input type="hidden" name="itemID" value=<%= item %> >
@@ -70,6 +79,9 @@
 							</form>
 						</td>
 					</tr>
+					
+					<!-- calculate total cost here -->
+					<% totalCost += set.getInt("price") * 1; %>
 					<% } %>
 				<% } } else { %>
 				<tr>
@@ -83,9 +95,13 @@
 		
 		<!-- only display the checkout button if the cart is not empty -->
 		<% if (cart != null && !cart.isEmpty() ) { %>
-			<form action="/CustomerInformation/index.jsp" method="GET">
-				<button name="checkout">Continue To Checkout</button>
-			</form>
+			<span>
+				<form action="/CustomerInformation/index.jsp" method="GET">
+					<button name="checkout">Continue To Checkout</button>
+				</form>
+				<!-- display total cost -->
+				<p class="total">Total Cost: $<%= totalCost %>.00</p>
+			</span>
 			
 			<!-- clearing the cart contents -->
 			<form action="/ShoppingCart/clear-cart" method="GET">
