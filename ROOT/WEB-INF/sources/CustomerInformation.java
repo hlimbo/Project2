@@ -90,9 +90,12 @@ public class CustomerInformation extends HttpServlet
 						if(gameIdSet.next())
 						{
 							int gameID = gameIdSet.getInt(1);
+                            int quantity = item.getValue();
 							insertStatement.setInt(1, customerID);
 							insertStatement.setInt(2, gameID);
-							insertStatement.executeUpdate();
+                            for (int qIndex=0;qIndex<quantity;++qIndex) {
+							    insertStatement.executeUpdate();
+                            }
 						}
 						else
 						{
