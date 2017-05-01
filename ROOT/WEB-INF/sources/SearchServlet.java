@@ -290,7 +290,7 @@ public class SearchServlet extends HttpServlet
                     continue;
                 }
                 results+="<td><a class=\"sortColumn\" href=\"/search/query"+requestUrl+"order="+column
-                    +requestUrlEnd+"\">"+column+"</a></td>";
+                    +requestUrlEnd+"\">"+column+"</a></td>\n";
             }
             results+="</tr>";
             if (table.trim().compareToIgnoreCase("games")==0) {
