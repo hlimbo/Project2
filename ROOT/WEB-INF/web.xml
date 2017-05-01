@@ -104,7 +104,7 @@
       
     <servlet-mapping>
     	<servlet-name>DeleteItemServlet</servlet-name>
-    	<url-pattern>/delete-item</url-pattern>
+        <url-pattern>/ShoppingCart/delete-item</url-pattern>
     </servlet-mapping>
 
 </web-app>
