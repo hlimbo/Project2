@@ -79,6 +79,40 @@ public class DisplayServlet extends HttpServlet
             if (table==null) {
                 table="games";
             }
+            String offset = (String) request.getParameter("offset");
+            if (offset==null) {
+                offset="0";
+            } else {
+                offset = offset.replaceAll("[\\D]","");
+            }
+            try {
+                request.setAttribute("displayOffset",Integer.parseInt(offset));
+            } catch (NumberFormatException ex) {
+                request.setAttribute("displayOffset",-1);
+            }
+            String limit = (String) request.getParameter("limit");
+            Integer limitMax = 50;
+            if (limit==null) {
+                limit=limitMax.toString();
+            } else {
+                limit = limit.replaceAll("[\\D]","");
+            }
+            if (limit.trim().compareTo("")==0) {
+                limit=limitMax.toString();
+            }
+            try {
+                Integer lim = Integer.parseInt(limit);
+                if (lim > limitMax) {
+                    lim=limitMax;
+                } else if (lim < 0) {
+                    lim=1;
+                }
+                limit = lim.toString();
+                request.setAttribute("displayLimit",lim);
+            } catch (NumberFormatException ex) {
+                limit = limitMax.toString();
+                request.setAttribute("displayLimit",limitMax);
+            }
 
             String masterTable = "((SELECT id AS game_ID FROM games) AS g_id NATURAL JOIN "
                 +"publishers_of_games NATURAL JOIN genres_of_games NATURAL JOIN (SELECT id AS publisher_id FROM publishers) AS p_id "
@@ -181,6 +215,8 @@ public class DisplayServlet extends HttpServlet
                 }
                 results+="</td></tr></TABLE>\n";
             }
+            int gameCount = -1;
+            request.setAttribute("displayGameCount",gameCount);
             for (String tbl : tables) {
                 //by convention of SQL schema, relation tables contains name
                 //of entity tables. For example, publishers_of_games contains both
@@ -188,7 +224,22 @@ public class DisplayServlet extends HttpServlet
                 if (tbl.indexOf(table) != -1 && tbl.trim().compareToIgnoreCase(table.trim()) != 0) {
                     results+="<tr>";
                     results+="<td>"+tbl.trim().replace("_of_","").replace(table,"")+":</td>";
-                    query="SELECT DISTINCT * FROM "+tbl+" WHERE "+tableIDCond;
+                    if (table.compareToIgnoreCase("games")!=0 && tbl.indexOf("games") != -1) {
+                        query="SELECT DISTINCT * FROM "+tbl+" WHERE "
+                            +tableIDCond;
+                        String originalQuery = query;
+                        query = "SELECT COUNT(*) FROM ("+query+") AS countable";
+                        PreparedStatement gameCountStatement = dbcon.prepareStatement(query);
+                        ResultSet gameCountRs= gameCountStatement.executeQuery();
+                        gameCountRs.next();
+                        gameCount=gameCountRs.getInt(1);
+                        gameCountStatement.close();
+                        gameCountRs.close();
+                        query=originalQuery+" LIMIT "+limit+" OFFSET "+offset;;
+                    } else {
+                        query="SELECT DISTINCT * FROM "+tbl+" WHERE "+tableIDCond;
+                    }
+                    request.setAttribute("displayGameCount",gameCount);
                     statement=dbcon.prepareStatement(query);
                     rs = statement.executeQuery();
                     results += "<td><TABLE border>";
