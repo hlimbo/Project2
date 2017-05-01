@@ -1,7 +1,10 @@
 <%-- Show results--%>
 <% if (request.getAttribute("searchResults") != null) { %>
 <%= (String) request.getAttribute("searchResults") %>
-    <% 
+    <%  if (((String)request.getAttribute("searchResults")).trim().compareTo("")==0) {
+    %>  <p> No Search Results </p> <%
+    } %>
+    <%
         Integer count = (int) request.getAttribute("searchCount");
         Integer offset = (int)request.getAttribute("searchOffset");
         Integer limit = (int)request.getAttribute("searchLimit");

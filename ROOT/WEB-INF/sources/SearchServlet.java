@@ -269,6 +269,12 @@ public class SearchServlet extends HttpServlet
             ignores.put("globalsales",true);
 
             ResultSetMetaData meta = rs.getMetaData();
+            boolean noResults = false;
+            if (!rs.next()) {
+                noResults=true;
+            } else {
+                rs.beforeFirst();
+            }
             results+="<tr>";
             String requestUrl = "?"+request.getQueryString();
             String requestUrlEnd = "";
@@ -359,6 +365,9 @@ public class SearchServlet extends HttpServlet
                 nextJSP = "/search/index.jsp";
             } else {
                 nextJSP="/"+nextJSP;
+            }
+            if (noResults) {
+                results="";
             }
             request.setAttribute("searchResults",results);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP); 
