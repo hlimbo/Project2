@@ -289,7 +289,7 @@ public class SearchServlet extends HttpServlet
                 if (ignores.containsKey(column) && ignores.get(column)) {
                     continue;
                 }
-                results+="<td><a href=\"/search/query"+requestUrl+"order="+column
+                results+="<td><a class=\"sortColumn\" href=\"/search/query"+requestUrl+"order="+column
                     +requestUrlEnd+"\">"+column+"</a></td>";
             }
             results+="</tr>";
