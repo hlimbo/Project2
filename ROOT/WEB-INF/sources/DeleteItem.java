@@ -24,7 +24,7 @@ public class DeleteItem extends HttpServlet
 	{	
 		System.out.println("DeleteItem.java");
 		HttpSession session = request.getSession(false);	
-		ArrayList<String> cartList = (ArrayList<String>)session.getAttribute("cartList");
+		HashMap<String,Integer> cartList = (HashMap<String,Integer>)session.getAttribute("cartList");
 /* 		ArrayList<?> attrs = (ArrayList<?>)session.getAttribute("cartList");
         if (attrs != null) {
             cartList = new ArrayList<String>();
@@ -40,7 +40,7 @@ public class DeleteItem extends HttpServlet
 		else
 		{
 			String itemID = (String)request.getParameter("itemID");
-			if(cartList.contains(itemID))
+			if(cartList.containsKey(itemID))
 			{
 				cartList.remove(itemID);
 				System.out.println("Successfully removed game id: " + itemID);

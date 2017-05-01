@@ -56,25 +56,25 @@
 			<th>Quantity</th>
 		</thead>
 		
-		<% ArrayList<String> cart = (ArrayList<String>)session.getAttribute("cartList"); %>	
+		<% HashMap<String,Integer> cart = (HashMap<String,Integer>)session.getAttribute("cartList"); %>	
 		<% int totalCost = 0; %>
 		<tbody>
 			
 				<% if ( cart != null && !cart.isEmpty() ) { %>
-				<% for (String item : cart){ %>
+				<% for (Map.Entry<String,Integer> item : cart.entrySet()){ %>
 				<% String itemQuery = "SELECT * FROM games WHERE id=?"; %>
 				<% PreparedStatement statement = dbcon.prepareStatement(itemQuery); %>
-				<% statement.setInt(1,Integer.valueOf(item)); %>
+				<% statement.setInt(1,Integer.valueOf(item.getKey())); %>
 				<% ResultSet set = statement.executeQuery(); %>
 					<% if(set.next()) { %>
 					<tr>
-						<td><%= item %></td>
+						<td><%= item.getKey() %></td>
 						<td> <%= set.getString("name") %> </td>
 						<td> <%= set.getInt("price") %> </td>
-						<td> <input type="text" name="quantity" > </td>
+						<td> <input type="text" name="quantity" value=<%= item.getValue() %>> </td>
 						<td> 
 							<form action="/ShoppingCart/delete-item" method="GET">
-								<input type="hidden" name="itemID" value=<%= item %> >
+								<input type="hidden" name="itemID" value=<%= item.getKey() %> >
 								<button name="deleteItem"> Delete </button>
 							</form>
 						</td>

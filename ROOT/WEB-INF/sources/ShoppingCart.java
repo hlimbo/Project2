@@ -25,16 +25,18 @@ public class ShoppingCart extends HttpServlet
 		throws IOException, ServletException
 	{		
 		HttpSession session = request.getSession();
-		ArrayList<String> cartList = null;
+		//key = game_id string
+		//value = quantity int
+		HashMap<String,Integer> cartList = null;
 		//critical section ~ retrieve the list of items in cart if it already exists
 		//if not, create a new cart with the item added to it.
 		synchronized(session)
 		{
-			cartList = (ArrayList<String>)session.getAttribute("cartList");
+			cartList = (HashMap<String,Integer>)session.getAttribute("cartList");
 			//if  cartList from the cart does not already exist, create one
 			if(cartList == null)
 			{
-				cartList = new ArrayList<String>();
+				cartList = new HashMap<String,Integer>();
 				session.setAttribute("cartList",cartList);
 			}
 		}
@@ -50,7 +52,8 @@ public class ShoppingCart extends HttpServlet
 			else if(cartList != null)
 			{
 				System.out.println("id: " + id);
-				cartList.add(id);
+				Integer quantity = cartList.get(id) == null ? 0 : (Integer) cartList.get(id);
+				cartList.put(id, ++quantity);
 			}
 		}
 		else
