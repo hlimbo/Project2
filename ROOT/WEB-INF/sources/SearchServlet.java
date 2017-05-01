@@ -57,13 +57,14 @@ public class SearchServlet extends HttpServlet
         return button;
     }
 
-	private static String tableRow (ResultSet result,String table, Hashtable<String,Boolean> link,
+	private static String tableRow (ResultSet result, Hashtable<String,Boolean> link,
             Hashtable<String,Boolean> images, Hashtable<String,Boolean> externalLinks, Hashtable<String,Boolean> ignores) throws SQLException {
 		ResultSetMetaData meta = result.getMetaData();
 	    String resString = "";
 		//resString+="<tr>";
 		for (int i=1;i<=meta.getColumnCount();++i) {
 			int type = meta.getColumnType(i);
+            String table = meta.getTableName(i);
 			String typeName = meta.getColumnTypeName(i);
             boolean handled = false;
             String value="";
@@ -298,7 +299,7 @@ public class SearchServlet extends HttpServlet
                 //get game fields
                 while (rs.next())
                 {
-                    records.add("<tr>"+tableRow(rs,table,links,images,externalLinks,ignores)+"</tr>");
+                    records.add("<tr>"+tableRow(rs,links,images,externalLinks,ignores)+"</tr>");
                     gameIDs.add(rs.getInt(1));
                 }
                 //get publishers
@@ -314,7 +315,7 @@ public class SearchServlet extends HttpServlet
                     while (rs.next()) {
                         records.set(i,records.get(i)+"\n<ul style=\""
                                 +"list-style-type:none;\">"
-                                +tableRow(rs,"publishers",links,
+                                +tableRow(rs,links,
                                     images,externalLinks,
                                     ignores).replaceAll("<td>","<li style=\"display:inline;margin 20px\">"
                                         ).replaceAll("</td>","</li> ")+"</ul>");
@@ -329,7 +330,7 @@ public class SearchServlet extends HttpServlet
                     rs = genStatement.executeQuery();
                     records.set(i,records.get(i)+"<tr><td>genres: </td><td><ul>");
                     while (rs.next()) {
-                        records.set(i,records.get(i)+tableRow(rs,"genres",links,
+                        records.set(i,records.get(i)+tableRow(rs,links,
                                     images,externalLinks,
                                     ignores).replaceAll("<td>","<li>").replaceAll("</td>","</li>"));
                     }
@@ -344,7 +345,7 @@ public class SearchServlet extends HttpServlet
             } else {
                 while (rs.next())
                 {
-                    results+="<tr>"+tableRow(rs,table,links,images,externalLinks,ignores)+"</tr>";
+                    results+="<tr>"+tableRow(rs,links,images,externalLinks,ignores)+"</tr>";
                     //results+=cartButton(Integer.toString(rs.getInt(1)),"1");
                 }
             }
