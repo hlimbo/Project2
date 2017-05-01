@@ -30,13 +30,7 @@ public class ShoppingCart extends HttpServlet
 		//if not, create a new cart with the item added to it.
 		synchronized(session)
 		{
-			ArrayList<?> attrs = (ArrayList<?>)session.getAttribute("cartList");
-            if (attrs != null) {
-                cartList = new ArrayList<String>();
-                for (Object attr : attrs) {
-                    cartList.add((String)attr);
-                }
-            }
+			cartList = (ArrayList<String>)session.getAttribute("cartList");
 			//if  cartList from the cart does not already exist, create one
 			if(cartList == null)
 			{
@@ -48,7 +42,7 @@ public class ShoppingCart extends HttpServlet
 		int parameterCount = request.getParameterMap().size();
 		if(parameterCount > 0)
 		{	
-			String id = (String)request.getParameter("id");
+			String id = request.getParameter("id");
 			if(id == null)
 			{
 				System.out.println("id value is null");

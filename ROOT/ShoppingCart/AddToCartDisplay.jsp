@@ -45,7 +45,6 @@
 		<p class="error"> <%= session.getAttribute("errorString") %> </p>
 		<% session.setAttribute("errorString", null); } %>
 		
-		
 		<table class="table">
 		<thead>
 			<th>ID</th>
