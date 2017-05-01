@@ -135,12 +135,32 @@
 			</form>
 		<% } %>
 		
+		
 		<!-- back to previous page -->
 		<% if( request.getParameter("previousPage") != null ){%>
-			<form action=<%= request.getParameter("previousPage") %> method="GET">
+			<% String previousPage = (String)request.getParameter("previousPage"); %>
+			<% if(previousPage.indexOf("?") != -1) { %>
+				<form action=<%= previousPage.split("\\?")[0] %> method="GET">	
+					<% String queryString = previousPage.split("\\?")[1]; %> 
+					<% for(String param : queryString.split("&")){ %>
+					<% if( param.split("=").length > 1) { %>
+				    <% String parsedValue = "name=\'" + param.split("=")[0] + "\'" + " value=\'"; %>  
+					<% try { 		String decodedValue = URLDecoder.decode(param.split("=")[1], "UTF-8"); %>
+						 <% parsedValue += decodedValue + "\'"; %>
+						  <input type="hidden" <%= parsedValue  %> >
+					<% } catch (UnsupportedEncodingException e) { %>
+					<%	e.printStackTrace(); %>
+					<% } %>
+					<% }  } %>
+		
+			
+		<% } else {  %>
+			<form action=<%= request.getParameter("previousPage") %> method="GET">	
+		<% }  %>
 				<button name="backToPrev">Back to Previous Page</button>
-			</form>
+		</form>
 		<% } %>
+		
 		
 		<!-- back to home page -->
 		<form action="/index.jsp" method="GET">

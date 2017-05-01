@@ -63,7 +63,7 @@ public class ShoppingCart extends HttpServlet
 		
 		//how to have /ShoppingCart/view-shopping-cart be linked to ShoppingCart/AddToCartDisplay.jsp
 		if(request.getParameter("previousPage") != null)
-			response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp?" + (String)request.getParameter("previousPage"));
+			response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp?previousPage=" + (String)request.getParameter("previousPage"));
 		else
 			response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp");//ShoppingCart/AddToCartDisplay.jsp"
 		
