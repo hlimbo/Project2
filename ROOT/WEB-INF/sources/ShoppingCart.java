@@ -62,9 +62,10 @@ public class ShoppingCart extends HttpServlet
 		}
 		
 		//how to have /ShoppingCart/view-shopping-cart be linked to ShoppingCart/AddToCartDisplay.jsp
-		
-		System.out.println("going to the next page!");
-		response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp");//ShoppingCart/AddToCartDisplay.jsp"
+		if(request.getParameter("previousPage") != null)
+			response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp?" + (String)request.getParameter("previousPage"));
+		else
+			response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp");//ShoppingCart/AddToCartDisplay.jsp"
 		
 	/* 	//retrieve the newItem to be added to cart from HttpServletRequest
 		String newItem = request.getParameter("newItem");
