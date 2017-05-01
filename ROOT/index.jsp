@@ -32,6 +32,7 @@ limitations under the License.
     <body>
 		<h1>Games Station Main Page</h1>
         <% if (session.getAttribute("first_name") != null) { %>
+			<jsp:include page="/ShoppingCart/ViewCart.jsp" />
             <jsp:include page="/headerLinks.jsp" />
             <jsp:include page="/browse/browse.jsp" />
             <jsp:include page="/search/search.jsp" />

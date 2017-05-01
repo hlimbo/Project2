@@ -57,6 +57,12 @@
 		
 		</tbody>
 		</table>
+		
+			<!-- clear the cart after successful purchase -->
+			<% cart.clear(); %>
+			<% cart = null; %>
+			<% session.setAttribute("cartList", null); %>
+		
 		<% } %>
 		
 	</BODY>

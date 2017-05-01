@@ -24,14 +24,7 @@ public class ClearCart extends HttpServlet
 	{	
 		System.out.println("Clearcart.java");
 		HttpSession session = request.getSession(false);	
-		ArrayList<String> cartList = null;
-		ArrayList<?> attrs = (ArrayList<?>)session.getAttribute("cartList");
-        if (attrs != null) {
-            cartList = new ArrayList<String>();
-            for (Object attr : attrs) {
-                cartList.add((String)attr);
-            }
-        }
+		ArrayList<String> cartList = (ArrayList<String>)session.getAttribute("cartList");
 		if(cartList == null)
 		{
 			System.out.println("Cart is already empty");
