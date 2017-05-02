@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
-  <TITLE>Customer Information</TITLE>
+  <TITLE>Credit Card Information</TITLE>
 
   <!-- <style>
 	input:invalid
@@ -80,7 +80,7 @@
 
 <BODY BGCOLOR="#FDF5E6">
 
-<H1 ALIGN="CENTER">Customer Information</H1>
+<H1 ALIGN="CENTER">Credit Card Information</H1>
 
 
 
