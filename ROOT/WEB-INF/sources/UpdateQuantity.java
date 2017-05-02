@@ -66,7 +66,11 @@ public class UpdateQuantity extends HttpServlet
 		}
 		
 		//session.getServletContext().getRequestDispatcher("/ShoppingCart/AddToCartDisplay.jsp").forward(request, response);
-		response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp");
+		//response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp");
+		if(request.getParameter("previousPage") != null)
+			response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp?previousPage=" + (String)request.getParameter("previousPage"));
+		else
+			response.sendRedirect("/ShoppingCart/AddToCartDisplay.jsp");//ShoppingCart/AddToCartDisplay.jsp"
 		
 	}
 	
