@@ -81,6 +81,7 @@
 <BODY BGCOLOR="#FDF5E6">
 
 <H1 ALIGN="CENTER">Credit Card Information</H1>
+<p>Confirm your purchase with credit card information.</p>
 
 
 
