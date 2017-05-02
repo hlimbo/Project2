@@ -27,7 +27,7 @@ SELECT,INSERT, UPDATE, and DROP privileges on the gamedb
 
 Access local website
 ------------------------------------------------------------
-Go to localhost:8080/project2_63
+Go to localhost:8080/ccopelan_project2_63
 
 Access aws instance
 ------------------------------------------------------------
