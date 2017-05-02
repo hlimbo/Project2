@@ -1,9 +1,10 @@
 WAR file deployment
 ------------------------------------------------------------
-Take the war file and drop it into the webapps folder of
-your tomcat installation. When the tomcat server is 
-running, it should automatically create the folder with 
-the website.
+Take the war file and rename it from ccopelan_project2.war 
+to ROOT.war and drop it into the webapps folder of your 
+tomcat installation. When the tomcat server is running, it 
+should automatically create the ROOT folder after a little
+bit of time.
 
 Compilation
 ------------------------------------------------------------
@@ -27,7 +28,10 @@ SELECT,INSERT, UPDATE, and DROP privileges on the gamedb
 
 Access local website
 ------------------------------------------------------------
-Go to localhost:8080/ccopelan_project2_63
+Go to localhost:8080/ on the machine with the tomcat running
+after the ROOT folder was created by tomcat.
+"See WAR file deployment" for directions on installing the
+WAR file.
 
 Access aws instance
 ------------------------------------------------------------
