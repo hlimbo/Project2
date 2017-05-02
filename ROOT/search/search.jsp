@@ -1,6 +1,40 @@
+<%@ page import="java.net.*" %>
+<%@ page import="java.io.*" %>
 <%-- Show results--%>
 <% if (request.getAttribute("searchResults") != null) { %>
-<%= (String) request.getAttribute("searchResults") %>
+    <form action="/search/query" method="GET">
+    <%        boolean descend = false;
+          if (request.getQueryString() != null) {
+            String descendQuery = request.getQueryString();
+            if (request.getParameter("descend")!=null
+                && ((String)request.getParameter("descend")
+                ).trim().compareToIgnoreCase("true")==0) {
+                descend=true;
+            }
+            if (descendQuery != null) {
+                for (String param : descendQuery.split("&")) {
+					 if( param.split("=").length > 1 && param.split("=")[0].trim().compareToIgnoreCase("descend")!=0) { 
+				        String parsedValue = "name=\'" + param.split("=")[0] + "\'" + " value=\'"; 
+					    try {
+                            String decodedValue = URLDecoder.decode(param.split("=")[1], "UTF-8");
+                            parsedValue += decodedValue + "\'";  %>
+                            <input type="hidden" <%= parsedValue   %> />
+					<% } catch (UnsupportedEncodingException e) { 
+						e.printStackTrace(); 
+					   } 
+					 } 
+                }
+            }
+          } 
+          %>
+        <% if (descend==true) { %> 
+            <input type="hidden" name="descend" value="false" />
+        <% } else { %>
+            <input type="hidden" name="descend" value="true" />
+        <% } %>
+        <input type="SUBMIT" value="Reverse Sort Order" />
+    </form>
+    <%= (String) request.getAttribute("searchResults") %>
     <%  if (((String)request.getAttribute("searchResults")).trim().compareTo("")==0) {
     %>  <p> No Search Results </p> <%
     } %>

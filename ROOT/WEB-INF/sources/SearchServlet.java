@@ -205,6 +205,11 @@ public class SearchServlet extends HttpServlet
             } else {
                 order = order.replaceAll("[^\\w]","_");
             }
+            String descParam = (String) request.getParameter("descend");
+            boolean descend = false;
+            if (descParam != null && descParam.trim().compareToIgnoreCase("true")==0) {
+                descend=true;
+            }
 
             String matchParameter = (String) request.getParameter("match");
             boolean useSubMatch = false;
@@ -242,8 +247,13 @@ public class SearchServlet extends HttpServlet
             query = "SELECT COUNT(*) FROM ("+query+") AS countable";
             statement = dbcon.prepareStatement(query);
             query = originalQuery;
-            query+=" ORDER BY ISNULL( "+table+"."+order+"), "+table+"."+order+", "
-                +table+".id LIMIT "+limit+" OFFSET "+offset;
+            if (descend) {
+                query+=" ORDER BY ISNULL( "+table+"."+order+"), "+table+"."+order+" DESC, "
+                    +table+".id LIMIT "+limit+" OFFSET "+offset;
+            } else {
+                query+=" ORDER BY ISNULL( "+table+"."+order+"), "+table+"."+order+" ASC, "
+                    +table+".id LIMIT "+limit+" OFFSET "+offset;
+            }
 
             int statementOffset = 1;
             statementOffset = setSearchTerm(request,"name",statement,statementOffset,useSubMatch);
